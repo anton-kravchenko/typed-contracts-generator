@@ -1,0 +1,2 @@
+# typed-contracts-generator
+TDB
