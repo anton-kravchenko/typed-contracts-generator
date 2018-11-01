@@ -1,5 +1,7 @@
 // @flow
 
+import { readJsonSchema } from './src/file_reader';
+
 /* TODO:
  - parser:
    - null
@@ -17,4 +19,9 @@
   - add config files (var name?, path to dir with schemas, e.t.c)
   - fink of ability to generate all schemas at once and emitting appropriate tree of contracts
   - get rid of react-scripts?
+  - add version
+  - add node version to pkj
 */
+
+console.log('WORKS');
+console.log(readJsonSchema('./sample.json'));

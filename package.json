@@ -1,16 +1,27 @@
 {
   "name": "typed-contracts-generator",
   "version": "0.1.0",
+  "description": "Tool for generating typed-contracts js modules from JsonSchemas.",
   "private": false,
   "dependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/plugin-proposal-class-properties": "^7.0.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-flow": "^7.0.0",
     "flow-bin": "^0.84.0",
+    "flow-typed": "^2.5.1",
+    "jest": "^23.6.0",
     "prettier": "^1.14.3",
-    "react-scripts": "2.0.5",
+    "rollup": "^0.66.6",
+    "rollup-plugin-babel": "^4.0.3",
+    "rollup-plugin-uglify": "^6.0.0",
     "typed-contracts": "^1.1.0"
   },
   "scripts": {
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "flow": "flow"
+    "start": "node ./build/bundle.js",
+    "build": "rollup -c rollup.config.js",
+    "test": "jest --verbose",
+    "flow": "flow",
+    "flow-typed:install": "flow-typed install --skip"
   }
 }
