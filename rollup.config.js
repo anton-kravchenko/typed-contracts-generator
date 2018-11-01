@@ -23,4 +23,5 @@ module.exports = {
     banner,
   },
   plugins: [babel(), uglify()],
+  external: ['fs'],
 };
