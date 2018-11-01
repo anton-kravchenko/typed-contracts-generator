@@ -1,6 +1,8 @@
 // @flow
+import 'regenerator-runtime/runtime';
 
 import { readJsonSchema } from './src/file_reader';
+import { parseCliArgs } from './src/cli/parser';
 
 /* TODO:
  - parser:
@@ -23,5 +25,9 @@ import { readJsonSchema } from './src/file_reader';
   - add node version to pkj
 */
 
-console.log('WORKS');
-console.log(readJsonSchema('./sample.json'));
+const main = async () => {
+  const opts = await parseCliArgs();
+  console.log('OPTIONS FROM MAON:', opts);
+};
+
+main();

@@ -6,6 +6,7 @@
 import packageJson from './package.json';
 import { uglify } from 'rollup-plugin-uglify';
 import babel from 'rollup-plugin-babel';
+import rollupPluginJson from 'rollup-plugin-json';
 
 const banner = `
 '#!/usr/bin/env node'
@@ -22,6 +23,7 @@ module.exports = {
     format: 'cjs',
     banner,
   },
-  plugins: [babel(), uglify()],
+  // plugins: [babel(), uglify(), rollupPluginJson()],
+  plugins: [babel(), uglify(), rollupPluginJson()],
   external: ['fs'],
 };

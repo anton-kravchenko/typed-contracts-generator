@@ -8,7 +8,8 @@
     "@babel/plugin-proposal-class-properties": "^7.0.0",
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-flow": "^7.0.0",
-    "commander": "^2.19.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "caporal": "^0.10.0",
     "flow-bin": "^0.84.0",
     "flow-typed": "^2.5.1",
     "jest": "^23.6.0",
@@ -16,6 +17,7 @@
     "prettier": "^1.14.3",
     "rollup": "^0.66.6",
     "rollup-plugin-babel": "^4.0.3",
+    "rollup-plugin-json": "^3.1.0",
     "rollup-plugin-uglify": "^6.0.0",
     "typed-contracts": "^1.1.0"
   },
