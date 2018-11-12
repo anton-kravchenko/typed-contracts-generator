@@ -2,7 +2,9 @@
 import { Emitter } from './emitter';
 
 let emitter;
-beforeEach(() => (emitter = new Emitter()));
+beforeEach(() => {
+  emitter = new Emitter();
+});
 
 it('should have 0 in initial tabs amount field', () => {
   expect(emitter.tabulate()).toEqual('');
@@ -75,17 +77,17 @@ it('should emit variable with boolean type (without var name)', () => {
 });
 
 it('should emit variable with object type', () => {
-  emitter.emitRefType('object', 'objectVar');
+  emitter.emitObjectType('objectVar');
   expect(emitter.extract()).toBe('"objectVar": isObject({');
 });
 
 it('should emit variable with object type (without var name)', () => {
-  emitter.emitRefType('object', null);
+  emitter.emitObjectType(null);
   expect(emitter.extract()).toBe('isObject({');
 });
 
 it('should emit array of integers', () => {
-  emitter.emitRefType('array', null);
+  emitter.emitArrayType(null);
   expect(emitter.extract()).toBe(`isArray(`);
 });
 

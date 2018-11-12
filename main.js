@@ -4,7 +4,7 @@ import 'regenerator-runtime/runtime';
 import { readJsonSchema } from './src/reader/f_reader';
 import { parseCliArgs } from './src/cli/parser';
 import { generateContract } from './src/contracts_emitter/contract_generator';
-import { emitter } from './src/contracts_emitter/emitter';
+import { Emitter } from './src/contracts_emitter/emitter';
 import { writeFile } from './src/writter/f_writter';
 import { generateJsModule } from './src/contracts_emitter/moduleGenerator';
 import { getPathsToSchemas } from './src/reader/tree_reader';
@@ -30,6 +30,8 @@ import { getPathsToSchemas } from './src/reader/tree_reader';
   - add node version to pkj
 */
 
+const emitter = new Emitter();
+
 const generateModule = (source: string, dest: string, name: string) => {
   try {
     emitter.reset();
@@ -42,7 +44,8 @@ const generateModule = (source: string, dest: string, name: string) => {
     writeFile(dest, jsModule);
     console.log(`Generating ${dest} - ${jsModule.length}`);
   } catch (e) {
-    // console.error(`\nFail to generate js module for ${source} - ${e}\n`);
+    console.error(`Fail to generate js module for ${source}`);
+    // console.error(`Fail to generate js module for ${source} - ${e}`);
   }
 };
 
@@ -52,6 +55,7 @@ const main = async () => {
   console.log('OPTIONS FROM MAIN1:', opts);
 
   const pathsToSchemas = getPathsToSchemas('./test_schemas/');
+
   let id = 0;
 
   console.log('SCHEMAS AMOUNT: ', pathsToSchemas.length);

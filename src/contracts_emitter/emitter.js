@@ -97,35 +97,32 @@ export class Emitter {
     throw new Error(`"${type}" type is not supported.`);
   }
 
-  emitRefType(type: string, varName: ?string) {
-    if ('object' === type) {
-      const m = NodeEmitContractMapping.get(type); // TODO: add type NodeTag for type
-
-      if (m) {
-        this.emitPrintTab('current');
-        this.append(
-          null != varName // FIXME: must be strict
-            ? `"${varName}": ${m}({\n`
-            : `${m}({\n`,
-        );
-        this.incrementTabsAmount();
-        return;
-      }
-    } else if ('array' === type) {
-      const m = NodeEmitContractMapping.get(type); // TODO: add type NodeTag for type
-
-      if (m) {
-        this.emitPrintTab('current');
-        this.append(
-          null != varName // FIXME: must be strict
-            ? `"${varName}": ${m}(`
-            : `${m}(`,
-        );
-
-        return;
-      }
+  emitObjectType(varName: ?string) {
+    const m = NodeEmitContractMapping.get('object'); // TODO: add type NodeTag for type
+    if (m) {
+      this.emitPrintTab('current');
+      this.append(
+        null != varName // FIXME: must be strict
+          ? `"${varName}": ${m}({\n`
+          : `${m}({\n`,
+      );
+      this.incrementTabsAmount();
     }
-    throw new Error(`"object" type is not supported.`);
+  }
+
+  emitArrayType(varName: ?string) {
+    const m = NodeEmitContractMapping.get('array'); // TODO: add type NodeTag for type
+
+    if (m) {
+      this.emitPrintTab('current');
+      this.append(
+        null != varName // FIXME: must be strict
+          ? `"${varName}": ${m}(`
+          : `${m}(`,
+      );
+
+      return;
+    }
   }
 
   emitPrintTab(amount: string) {

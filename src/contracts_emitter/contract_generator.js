@@ -25,8 +25,7 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
         );
       }
 
-      emitter.emitRefType('object', varName);
-      // emitter.emit('print_new_line'); // TODO: incapsulate it to the object emitter
+      emitter.emitObjectType(varName);
 
       required.forEach(fieldName => {
         const node = properties[fieldName];
@@ -43,7 +42,7 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
         throw new Error(`Proper array node should have "items" field: ${JSON.stringify(source)}`);
       }
 
-      emitter.emitRefType('array', varName);
+      emitter.emitArrayType(varName);
       if ('object' === items.type) {
         generateContract(items, emitter);
       } else {

@@ -1,3 +1,5 @@
+// @flow
+
 import { generateContract } from './contract_generator';
 import { Emitter } from './emitter';
 
@@ -42,7 +44,9 @@ import {
 } from './schemas/referenceTypes';
 
 let emitter;
-beforeEach(() => (emitter = new Emitter()));
+beforeEach(() => {
+  emitter = new Emitter();
+});
 
 it('should emit number type', () => {
   generateContract(numberSchema, emitter);
