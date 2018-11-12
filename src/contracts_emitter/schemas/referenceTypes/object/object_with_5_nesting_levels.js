@@ -44,8 +44,7 @@ export const schema = {
                   required: ['e'],
                   properties: {
                     e: {
-                      $id:
-                        '#/properties/a/properties/b/properties/c/properties/d/properties/e',
+                      $id: '#/properties/a/properties/b/properties/c/properties/d/properties/e',
                       type: 'integer',
                       title: 'The E Schema',
                       default: 0,
@@ -68,9 +67,9 @@ export const contract = `isObject({
       c: isObject({
         d: isObject({
           e: isNumber,
-        }),
-      }),
-    }),
-  }),
-});
+        })(''),
+      })(''),
+    })(''),
+  })(''),
+})('');
 `;

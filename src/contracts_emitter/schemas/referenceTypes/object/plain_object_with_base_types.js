@@ -39,5 +39,5 @@ export const contract = `isObject({
   a: isNumber,
   b: isString,
   c: isBoolean,
-});
+})('');
 `;

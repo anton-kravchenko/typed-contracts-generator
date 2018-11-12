@@ -30,6 +30,14 @@ export class Emitter extends EventEmitter {
 
   extract = (): string => {
     this.result = this.cleanTailTrailingComasAndNewLines(this.result);
+    if (
+      this.result.substr(this.result.length - 4, this.result.length) !== "('')" &&
+      this.result[this.result.length - 1] !== '{' &&
+      this.result[this.result.length - 1] !== '('
+    ) {
+      console.log('123123123123123123123123');
+      this.result += "('')"; // Tailing call to generate validator func
+    }
 
     try {
       // FIXME: use prettier in a more smart way - prettier.resolveConfig
@@ -40,7 +48,7 @@ export class Emitter extends EventEmitter {
         singleQuote: true,
         tabWidth: 2,
         trailingComma: 'all',
-        printWidth: 80,
+        printWidth: 100,
       });
     } catch (e) {
       // That's expected - some of the tests may produce not sintactically invalid js
@@ -82,7 +90,7 @@ emitter.on('val_type', (type: string, varName: ?string) => {
     if (m) {
       if (null != varName) {
         emitter.emit('print_tab', 'current');
-        emitter.append(`${varName}: ${m},\n`);
+        emitter.append(`"${varName}": ${m},\n`);
       } else {
         emitter.append(`${m},\n`);
       }
@@ -100,7 +108,7 @@ emitter.on('ref_type', (type: string, varName: string | null) => {
       emitter.emit('print_tab', 'current');
       emitter.append(
         null != varName // FIXME: must be strict
-          ? `${varName}: ${m}({\n`
+          ? `"${varName}": ${m}({\n`
           : `${m}({\n`,
       );
       emitter.incrementTabsAmount();
@@ -113,7 +121,7 @@ emitter.on('ref_type', (type: string, varName: string | null) => {
       emitter.emit('print_tab', 'current');
       emitter.append(
         null != varName // FIXME: must be strict
-          ? `${varName}: ${m}(`
+          ? `"${varName}": ${m}(`
           : `${m}(`,
       );
 
@@ -151,7 +159,7 @@ emitter.on('close_object', () => {
   emitter.deleteTab();
   // console.log(`RESULT: AFTER DELETTING TAB"${emitter.result}"`);
 
-  emitter.append('}),\n');
+  emitter.append("})(''),\n");
   // console.log(`RESULT: AFTER ADDING NEW LINE AND BRACES"${emitter.result}"`);
 
   // console.log(`RESULT:FINAL "${emitter.result}"`);
@@ -160,7 +168,7 @@ emitter.on('close_object', () => {
 
 emitter.on('close_array', () => {
   emitter.result = emitter.cleanTailTrailingComasAndNewLines(emitter.result);
-  emitter.append('),\n');
+  emitter.append(")(''),\n");
 });
 
 emitter.on('clean_tailing_comas_and_new_lines', () => {

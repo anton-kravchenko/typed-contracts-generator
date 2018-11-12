@@ -10,4 +10,4 @@ export const schema = {
   default: '',
   pattern: '^(.*)$',
 };
-export const contract = `isString;\n`;
+export const contract = `isString('');\n`;

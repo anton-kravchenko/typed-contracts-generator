@@ -56,8 +56,8 @@ export const contract = `isObject({
     b: isObject({
       c: isObject({
         d: isNumber,
-      }),
-    }),
-  }),
-});
+      })(''),
+    })(''),
+  })(''),
+})('');
 `;

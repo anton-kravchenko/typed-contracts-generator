@@ -63,16 +63,14 @@ export const schema = {
                   required: ['e', 'f'],
                   properties: {
                     e: {
-                      $id:
-                        '#/properties/a/properties/b/properties/c/properties/d/properties/e',
+                      $id: '#/properties/a/properties/b/properties/c/properties/d/properties/e',
                       type: 'integer',
                       title: 'The E Schema',
                       default: 0,
                       examples: [1],
                     },
                     f: {
-                      $id:
-                        '#/properties/a/properties/b/properties/c/properties/d/properties/f',
+                      $id: '#/properties/a/properties/b/properties/c/properties/d/properties/f',
                       type: 'string',
                       title: 'The F Schema',
                       default: '',
@@ -88,16 +86,14 @@ export const schema = {
                   required: ['a', 'b'],
                   properties: {
                     a: {
-                      $id:
-                        '#/properties/a/properties/b/properties/c/properties/f/properties/a',
+                      $id: '#/properties/a/properties/b/properties/c/properties/f/properties/a',
                       type: 'integer',
                       title: 'The A Schema',
                       default: 0,
                       examples: [1],
                     },
                     b: {
-                      $id:
-                        '#/properties/a/properties/b/properties/c/properties/f/properties/b',
+                      $id: '#/properties/a/properties/b/properties/c/properties/f/properties/b',
                       type: 'string',
                       title: 'The B Schema',
                       default: '',
@@ -219,27 +215,27 @@ export const contract = `isObject({
         d: isObject({
           e: isNumber,
           f: isString,
-        }),
+        })(''),
         f: isObject({
           a: isNumber,
           b: isString,
-        }),
-      }),
+        })(''),
+      })(''),
       f1: isBoolean,
-    }),
+    })(''),
     f3: isObject({
       f1: isBoolean,
       f4: isNumber,
       f5: isString,
-    }),
-  }),
-  b: isArray(isNumber),
+    })(''),
+  })(''),
+  b: isArray(isNumber)(''),
   c: isArray(
     isObject({
       a: isNumber,
       b: isBoolean,
       c: isString,
-    }),
-  ),
-});
+    })(''),
+  )(''),
+})('');
 `;

@@ -10,4 +10,4 @@ export const schema = {
   default: false,
 };
 
-export const contract = `isBoolean;\n`;
+export const contract = `isBoolean('');\n`;

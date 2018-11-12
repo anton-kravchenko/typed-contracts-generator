@@ -24,6 +24,6 @@ export const schema = {
 };
 
 export const contract = `isObject({
-  a: isArray(isNumber),
-});
+  a: isArray(isNumber)(''),
+})('');
 `;

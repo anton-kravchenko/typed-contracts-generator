@@ -9,4 +9,4 @@ export const schema = {
   title: 'The Root Schema',
   default: 0,
 };
-export const contract = `isNumber;\n`;
+export const contract = `isNumber('');\n`;

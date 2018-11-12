@@ -55,8 +55,8 @@ export const schema = {
 };
 
 export const contract = `isObject({
-  a: isArray(isNumber),
-  b: isArray(isString),
-  c: isArray(isBoolean),
-});
+  a: isArray(isNumber)(''),
+  b: isArray(isString)(''),
+  c: isArray(isBoolean)(''),
+})('');
 `;

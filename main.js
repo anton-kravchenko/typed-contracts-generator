@@ -56,7 +56,7 @@ const main = async () => {
 
   console.log('SCHEMAS AMOUNT: ', pathsToSchemas.length);
   pathsToSchemas.forEach(pathToSchema => {
-    generateModule(pathToSchema, `./schemas/${pathToSchema}.js`, id.toString());
+    generateModule(pathToSchema, `./schemas/${id}.js`, id.toString());
     id++;
   });
   console.log('MAIN END');

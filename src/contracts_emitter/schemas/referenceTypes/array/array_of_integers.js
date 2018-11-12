@@ -17,4 +17,4 @@ export const schema = {
   },
 };
 
-export const contract = `isArray(isNumber);\n`;
+export const contract = `isArray(isNumber)('');\n`;
