@@ -1,7 +1,7 @@
 // @flow
 import 'regenerator-runtime/runtime';
 
-import { readJsonSchema } from './src/file_reader';
+import { readJsonSchema } from './src/reader/f_reader';
 import { parseCliArgs } from './src/cli/parser';
 
 /* TODO:
@@ -30,6 +30,9 @@ const main = async () => {
 
   console.log('OPTIONS FROM MAIN1:', opts);
   console.log('MAIN END');
+
+  const { source } = opts;
+  console.log(readJsonSchema(source));
 };
 
 main();
