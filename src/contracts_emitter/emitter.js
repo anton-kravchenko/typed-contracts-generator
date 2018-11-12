@@ -75,7 +75,6 @@ export class Emitter {
   };
 
   tabulate = (): string => {
-    // console.log('TABS ', this.tabsAmount);
     return ' '.repeat(this.tabsAmount * TAB_SIZE);
   };
 
@@ -142,22 +141,10 @@ export class Emitter {
   }
 
   emitCloseObject() {
-    // console.log(`=============================================================`);
-    // console.log(`RESULT: BEFORE"${this.result}"`);
     this.result = this.cleanTailTrailingComasAndNewLines(this.result);
-    // console.log(`RESULT: AFTER CLEAN UP"${this.result}"`);
-
     this.result += ',\n';
-    // console.log(`RESULT: AFTER ADDING TRAILING COMA "${this.result}"`);
-
     this.deleteTab();
-    // console.log(`RESULT: AFTER DELETTING TAB"${this.result}"`);
-
     this.append("})(''),\n");
-    // console.log(`RESULT: AFTER ADDING NEW LINE AND BRACES"${this.result}"`);
-
-    // console.log(`RESULT:FINAL "${this.result}"`);
-    // console.log(`=============================================================`);
   }
 
   emitCloseArray() {
