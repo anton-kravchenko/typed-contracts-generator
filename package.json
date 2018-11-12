@@ -21,6 +21,9 @@
     "rollup-plugin-uglify": "^6.0.0",
     "typed-contracts": "^1.1.0"
   },
+  "resolutions": {
+    "babel-core": "7.0.0-bridge.0"
+  },
   "scripts": {
     "start": "node ./build/bundle.js",
     "build": "rollup -c rollup.config.js",
