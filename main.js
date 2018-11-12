@@ -26,8 +26,10 @@ import { parseCliArgs } from './src/cli/parser';
 */
 
 const main = async () => {
-  const opts = await parseCliArgs();
-  console.log('OPTIONS FROM MAON:', opts);
+  const opts = parseCliArgs();
+
+  console.log('OPTIONS FROM MAIN1:', opts);
+  console.log('MAIN END');
 };
 
 main();
