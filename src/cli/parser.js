@@ -32,6 +32,8 @@ export type Options = {|
 //   return p;
 // };
 
+// FIXME: parse a name for contract
+// FIXME: check why it is necessary  to call contract with string before usage
 export const parseCliArgs = (): Options => {
   console.log('ARGV:', process.argv);
   return {

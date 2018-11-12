@@ -26,6 +26,7 @@
   },
   "scripts": {
     "start": "node ./build/bundle.js",
+    "run": "npm run build && npm start -s /Users/anton.kravchenko/typed-contracts-generator/test_schemas/result/data/v:api_version/search/:context/autocomplete/GET/0_schema -d ./schemas/test.js && cat schemas/test.js",
     "build": "rollup -c rollup.config.js",
     "test": "jest --verbose",
     "check_health": "npm-run-all test flow build",

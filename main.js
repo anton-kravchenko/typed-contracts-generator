@@ -3,6 +3,10 @@ import 'regenerator-runtime/runtime';
 
 import { readJsonSchema } from './src/reader/f_reader';
 import { parseCliArgs } from './src/cli/parser';
+import { generateContract } from './src/contracts_emitter/contract_generator';
+import { emitter } from './src/contracts_emitter/emitter';
+import { writeFile } from './src/writter/f_writter';
+import { generateJsModule } from './src/contracts_emitter/moduleGenerator';
 
 /* TODO:
  - parser:
@@ -31,8 +35,14 @@ const main = async () => {
   console.log('OPTIONS FROM MAIN1:', opts);
   console.log('MAIN END');
 
-  const { source } = opts;
-  console.log(readJsonSchema(source));
+  const { source, dest } = opts;
+  const data = readJsonSchema(source);
+
+  generateContract(data, emitter);
+  const contract = emitter.extract();
+
+  const jsModule = generateJsModule(contract, 'SearchAutocomplete');
+  writeFile(dest, jsModule);
 };
 
 main();

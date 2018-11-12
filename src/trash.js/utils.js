@@ -1,6 +1,6 @@
 // @flow
-import * as t from "typed-contracts";
-import { validate, type ExtractType } from "./validator";
+import * as t from 'typed-contracts';
+import { validate, type ExtractType } from '../contracts_emitter/validator';
 
 const campaignContract = t.isObject({
   id: t.isNumber,
@@ -12,10 +12,10 @@ const campaignContract = t.isObject({
     title: t.isString,
     subTitle: t.isString,
     inputPrompt: t.isString,
-    position: t.isString
+    position: t.isString,
   }),
-  companyId: t.isNumber
-})("campaign");
+  companyId: t.isNumber,
+})('campaign');
 
 export type CampaignType = ExtractType<typeof campaignContract>;
 export const validateCampaign = validate<CampaignType>(campaignContract);
