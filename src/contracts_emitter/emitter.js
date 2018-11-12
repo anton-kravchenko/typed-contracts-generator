@@ -8,7 +8,7 @@ const TAB_SIZE = 2;
 
 // FIXME: remove code styling (tabs, spacing, e.t.c) from emitter
 
-export class Emitter extends EventEmitter {
+export class Emitter {
   tabsAmount: number = 0;
 
   result: string = '';
@@ -35,7 +35,6 @@ export class Emitter extends EventEmitter {
       this.result[this.result.length - 1] !== '{' &&
       this.result[this.result.length - 1] !== '('
     ) {
-      console.log('123123123123123123123123');
       this.result += "('')"; // Tailing call to generate validator func
     }
 
@@ -79,99 +78,97 @@ export class Emitter extends EventEmitter {
     // console.log('TABS ', this.tabsAmount);
     return ' '.repeat(this.tabsAmount * TAB_SIZE);
   };
-}
 
-const emitter = new Emitter();
-
-emitter.on('val_type', (type: string, varName: ?string) => {
-  if (type === 'boolean' || type === 'string' || type === 'number') {
-    // TODO: add type NodeTag for type
-    const m = NodeEmitContractMapping.get(type);
-    if (m) {
-      if (null != varName) {
-        emitter.emit('print_tab', 'current');
-        emitter.append(`"${varName}": ${m},\n`);
-      } else {
-        emitter.append(`${m},\n`);
+  //  EMITTERS
+  emitValType(type: string, varName: string | null) {
+    if (type === 'boolean' || type === 'string' || type === 'number') {
+      // TODO: add type NodeTag for type
+      const m = NodeEmitContractMapping.get(type);
+      if (m) {
+        if (null != varName) {
+          this.emitPrintTab('current');
+          this.append(`"${varName}": ${m},\n`);
+        } else {
+          this.append(`${m},\n`);
+        }
+        return;
       }
-      return;
+    }
+    throw new Error(`"${type}" type is not supported.`);
+  }
+
+  emitRefType(type: string, varName: string | null) {
+    if ('object' === type) {
+      const m = NodeEmitContractMapping.get(type); // TODO: add type NodeTag for type
+
+      if (m) {
+        this.emitPrintTab('current');
+        this.append(
+          null != varName // FIXME: must be strict
+            ? `"${varName}": ${m}({\n`
+            : `${m}({\n`,
+        );
+        this.incrementTabsAmount();
+        return;
+      }
+    } else if ('array' === type) {
+      const m = NodeEmitContractMapping.get(type); // TODO: add type NodeTag for type
+
+      if (m) {
+        this.emitPrintTab('current');
+        this.append(
+          null != varName // FIXME: must be strict
+            ? `"${varName}": ${m}(`
+            : `${m}(`,
+        );
+
+        return;
+      }
+    }
+    throw new Error(`"object" type is not supported.`);
+  }
+
+  emitPrintTab(amount: string) {
+    if ('current' === amount) {
+      this.append(this.tabulate());
+    } else if ('more' === amount) {
+      this.addTab();
+    } else if ('less' === amount) {
+      this.deleteTab();
+    } else {
+      throw new Error(`Unsupported value for the "print_tab" event: ${amount}`);
     }
   }
-  throw new Error(`"${type}" type is not supported.`);
-});
 
-emitter.on('ref_type', (type: string, varName: string | null) => {
-  if ('object' === type) {
-    const m = NodeEmitContractMapping.get(type); // TODO: add type NodeTag for type
-
-    if (m) {
-      emitter.emit('print_tab', 'current');
-      emitter.append(
-        null != varName // FIXME: must be strict
-          ? `"${varName}": ${m}({\n`
-          : `${m}({\n`,
-      );
-      emitter.incrementTabsAmount();
-      return;
-    }
-  } else if ('array' === type) {
-    const m = NodeEmitContractMapping.get(type); // TODO: add type NodeTag for type
-
-    if (m) {
-      emitter.emit('print_tab', 'current');
-      emitter.append(
-        null != varName // FIXME: must be strict
-          ? `"${varName}": ${m}(`
-          : `${m}(`,
-      );
-
-      return;
-    }
+  emitPrintNewLine(amount: string) {
+    this.append('\n');
   }
-  throw new Error(`"object" type is not supported.`);
-});
 
-emitter.on('print_tab', (amount: string) => {
-  if ('current' === amount) {
-    emitter.append(emitter.tabulate());
-  } else if ('more' === amount) {
-    emitter.addTab();
-  } else if ('less' === amount) {
-    emitter.deleteTab();
-  } else {
-    throw new Error(`Unsupported value for the "print_tab" event: ${amount}`);
+  emitCloseObject() {
+    // console.log(`=============================================================`);
+    // console.log(`RESULT: BEFORE"${this.result}"`);
+    this.result = this.cleanTailTrailingComasAndNewLines(this.result);
+    // console.log(`RESULT: AFTER CLEAN UP"${this.result}"`);
+
+    this.result += ',\n';
+    // console.log(`RESULT: AFTER ADDING TRAILING COMA "${this.result}"`);
+
+    this.deleteTab();
+    // console.log(`RESULT: AFTER DELETTING TAB"${this.result}"`);
+
+    this.append("})(''),\n");
+    // console.log(`RESULT: AFTER ADDING NEW LINE AND BRACES"${this.result}"`);
+
+    // console.log(`RESULT:FINAL "${this.result}"`);
+    // console.log(`=============================================================`);
   }
-});
 
-emitter.on('print_new_line', (amount: string) => {
-  emitter.append('\n');
-});
+  emitCloseArray() {
+    this.result = this.cleanTailTrailingComasAndNewLines(this.result);
+    this.append(")(''),\n");
+  }
 
-emitter.on('close_object', () => {
-  // console.log(`=============================================================`);
-  // console.log(`RESULT: BEFORE"${emitter.result}"`);
-  emitter.result = emitter.cleanTailTrailingComasAndNewLines(emitter.result);
-  // console.log(`RESULT: AFTER CLEAN UP"${emitter.result}"`);
-
-  emitter.result += ',\n';
-  // console.log(`RESULT: AFTER ADDING TRAILING COMA "${emitter.result}"`);
-
-  emitter.deleteTab();
-  // console.log(`RESULT: AFTER DELETTING TAB"${emitter.result}"`);
-
-  emitter.append("})(''),\n");
-  // console.log(`RESULT: AFTER ADDING NEW LINE AND BRACES"${emitter.result}"`);
-
-  // console.log(`RESULT:FINAL "${emitter.result}"`);
-  // console.log(`=============================================================`);
-});
-
-emitter.on('close_array', () => {
-  emitter.result = emitter.cleanTailTrailingComasAndNewLines(emitter.result);
-  emitter.append(")(''),\n");
-});
-
-emitter.on('clean_tailing_comas_and_new_lines', () => {
-  emitter.result = emitter.cleanTailTrailingComasAndNewLines(emitter.result);
-});
-export { emitter };
+  emitCleanTailingComasAndNewLines() {
+    this.result = this.cleanTailTrailingComasAndNewLines(this.result);
+  }
+}
