@@ -80,7 +80,7 @@ export class Emitter {
   };
 
   //  EMITTERS
-  emitValType(type: string, varName: string | null) {
+  emitValType(type: string, varName: ?string) {
     if (type === 'boolean' || type === 'string' || type === 'number') {
       // TODO: add type NodeTag for type
       const m = NodeEmitContractMapping.get(type);
@@ -97,7 +97,7 @@ export class Emitter {
     throw new Error(`"${type}" type is not supported.`);
   }
 
-  emitRefType(type: string, varName: string | null) {
+  emitRefType(type: string, varName: ?string) {
     if ('object' === type) {
       const m = NodeEmitContractMapping.get(type); // TODO: add type NodeTag for type
 

@@ -1,5 +1,5 @@
 import { generateContract } from './contract_generator';
-import { emitter } from './emitter';
+import { Emitter } from './emitter';
 
 import {
   numberSchema,
@@ -41,7 +41,8 @@ import {
   plainObjectWith3ArrayFieldsContract,
 } from './schemas/referenceTypes';
 
-afterEach(() => emitter.reset());
+let emitter;
+beforeEach(() => (emitter = new Emitter()));
 
 it('should emit number type', () => {
   generateContract(numberSchema, emitter);
@@ -59,9 +60,7 @@ it('should emit string type', () => {
 });
 
 it('should throw when processing unsupported node type', () => {
-  expect(() => generateContract({ type: 'magic' }, emitter)).toThrow(
-    `Can't process "magic" node.`,
-  );
+  expect(() => generateContract({ type: 'magic' }, emitter)).toThrow(`Can't process "magic" node.`);
 });
 
 it(`should throw when receiving invalid object (with no "required" field`, () => {
