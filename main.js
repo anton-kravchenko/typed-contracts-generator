@@ -42,7 +42,7 @@ const generateModule = (source: string, dest: string, name: string) => {
     writeFile(dest, jsModule);
     console.log(`Generating ${dest} - ${jsModule.length}`);
   } catch (e) {
-    console.error(`\nFail to generate js module for ${source} - ${e}\n`);
+    // console.error(`\nFail to generate js module for ${source} - ${e}\n`);
   }
 };
 
