@@ -7,6 +7,7 @@ import { generateContract } from './src/contracts_emitter/contract_generator';
 import { emitter } from './src/contracts_emitter/emitter';
 import { writeFile } from './src/writter/f_writter';
 import { generateJsModule } from './src/contracts_emitter/moduleGenerator';
+import { getPathsToSchemas } from './src/reader/tree_reader';
 
 /* TODO:
  - parser:
@@ -29,20 +30,36 @@ import { generateJsModule } from './src/contracts_emitter/moduleGenerator';
   - add node version to pkj
 */
 
+const generateModule = (source: string, dest: string, name: string) => {
+  try {
+    emitter.reset();
+    const data = readJsonSchema(source);
+
+    generateContract(data, emitter);
+    const contract = emitter.extract();
+
+    const jsModule = generateJsModule(contract, 'SearchAutocomplete');
+    writeFile(dest, jsModule);
+    console.log(`Generating ${dest} - ${jsModule.length}`);
+  } catch (e) {
+    console.error(`\nFail to generate js module for ${source} - ${e}\n`);
+  }
+};
+
 const main = async () => {
   const opts = parseCliArgs();
 
   console.log('OPTIONS FROM MAIN1:', opts);
+
+  const pathsToSchemas = getPathsToSchemas('./test_schemas/');
+  let id = 0;
+
+  console.log('SCHEMAS AMOUNT: ', pathsToSchemas.length);
+  pathsToSchemas.forEach(pathToSchema => {
+    generateModule(pathToSchema, `./schemas/${pathToSchema}.js`, id.toString());
+    id++;
+  });
   console.log('MAIN END');
-
-  const { source, dest } = opts;
-  const data = readJsonSchema(source);
-
-  generateContract(data, emitter);
-  const contract = emitter.extract();
-
-  const jsModule = generateJsModule(contract, 'SearchAutocomplete');
-  writeFile(dest, jsModule);
 };
 
 main();

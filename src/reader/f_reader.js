@@ -45,6 +45,7 @@ const handleParseError = (parseErrCode: PARSE_ERROR, fPath: string): void => {
   switch (parseErrCode) {
     case 4:
       console.log(`${fPath} - not a valid JSON file.`);
+      throw Error(); // FIXME: figure out how to handle it
       return process.exit(parseErrCode);
     default:
       (parseErrCode: empty); /* eslint-disable-line */
