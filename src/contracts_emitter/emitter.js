@@ -48,22 +48,23 @@ export class Emitter {
     ) {
       this.result += "('')"; // Tailing call to generate validator func
     }
-
-    try {
-      // FIXME: use prettier in a more smart way - prettier.resolveConfig
-      // avoid passing object with options directly
-      // FIXME: fix this No parser and no filepath given, using 'babylon' the parser now but this will throw an error in the future. Please specify a parser or a filepath so one can be inferred.
-      return prettier.format(this.result, {
-        parser: 'babylon',
-        singleQuote: true,
-        tabWidth: 2,
-        trailingComma: 'all',
-        printWidth: 100,
-      });
-    } catch (e) {
-      // That's expected - some of the tests may produce not sintactically invalid js
-      return this.result;
-    }
+    console.log(this.result);
+    // try {
+    // FIXME: use prettier in a more smart way - prettier.resolveConfig
+    // avoid passing object with options directly
+    // FIXME: fix this No parser and no filepath given, using 'babylon' the parser now but this will throw an error in the future. Please specify a parser or a filepath so one can be inferred.
+    const prettierConfig = {
+      parser: 'babylon',
+      singleQuote: true,
+      tabWidth: 2,
+      trailingComma: 'all',
+      printWidth: 100,
+    };
+    return prettier.format(this.result, prettierConfig);
+    // } catch (e) {
+    // That's expected - some of the tests may produce not sintactically invalid js
+    // return this.result;
+    // }
   };
 
   reset = (): void => {

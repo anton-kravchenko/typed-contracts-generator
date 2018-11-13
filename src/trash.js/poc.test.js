@@ -200,3 +200,96 @@ test('246', () => {
   const r = val(obj);
   expect(r).toEqual(obj);
 });
+
+test('251', () => {
+  const val = isObject({
+    'a-z': isArray((valueName, value) =>
+      isObject({
+        name: isString,
+        slug: isString,
+      })(valueName, value),
+    ),
+    genres: isArray((valueName, value) =>
+      isObject({
+        name: isString,
+        slug: isString,
+      })(valueName, value),
+    ),
+    ratings: isArray((valueName, value) =>
+      isObject({
+        name: isString,
+        slug: isString,
+      })(valueName, value),
+    ),
+    whats_hot: isArray((valueName, value) =>
+      isObject({
+        genres: isArray((valueName, value) =>
+          isObject({
+            name: isString,
+            slug: isString,
+            source: isString,
+          })(valueName, value),
+        ),
+        regions: isArray((valueName, value) =>
+          isObject({
+            name: isString,
+            slug: isString,
+            source: isString,
+          })(valueName, value),
+        ),
+      })(valueName, value),
+    ),
+  })('');
+
+  const obj = {
+    'a-z': [{ name: 'isString', slug: 'isString' }],
+    genres: [{ name: 'isString', slug: 'isString' }],
+    ratings: [{ name: 'isString', slug: 'isString' }],
+    whats_hot: [
+      {
+        genres: [{ name: 'isString', slug: 'isString', source: 'source' }],
+        regions: [{ name: 'isString', slug: 'isString', source: 'string' }],
+      },
+    ],
+  };
+
+  const r = val(obj);
+  expect(r).toEqual(obj);
+});
+
+test('334', () => {
+  const val = isObject({
+    contentRights: isObject({
+      contentId: isString,
+      usageRules: isObject({
+        expirationDate: isString,
+        viewingDuration: isNumber,
+        viewingWindow: isString,
+      }),
+    }),
+    errorCode: isNumber,
+    errorMessage: isString,
+    portalData: isString,
+    privateData: isString,
+    status: isString,
+  })('');
+
+  const obj = {
+    contentRights: {
+      contentId: 'isString',
+      usageRules: {
+        expirationDate: 'isString',
+        viewingDuration: 1,
+        viewingWindow: 'isString',
+      },
+    },
+    errorCode: 1,
+    errorMessage: 'isString',
+    portalData: 'isString',
+    privateData: 'isString',
+    status: 'isString',
+  };
+
+  const r = val(obj);
+  expect(r).toEqual(obj);
+});
