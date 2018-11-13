@@ -16,7 +16,8 @@ const readFile = (fPath: string): string | READ_ERROR => {
 const parseFile = (source: string): Node | PARSE_ERROR => {
   // TODO: add typed contract validation
   try {
-    return JSON.parse(source);
+    const parsed = JSON.parse(source);
+    return parsed;
   } catch (e) {
     return 4;
   }
@@ -25,6 +26,13 @@ const parseFile = (source: string): Node | PARSE_ERROR => {
 const handleReadError = (readErrCode: READ_ERROR, fPath: string): void => {
   switch (readErrCode) {
     case 1: {
+      console.log(`${fPath.length} was not found.`);
+      console.log(`${fPath} was not found.`);
+      console.log(`${fPath} was not found.`);
+      console.log(`${fPath} was not found.`);
+      console.log(`${fPath} was not found.`);
+      console.log(`${fPath} was not found.`);
+      console.log(`${fPath} was not found.`);
       console.log(`${fPath} was not found.`);
       return process.exit(readErrCode);
     }
@@ -44,8 +52,7 @@ const handleReadError = (readErrCode: READ_ERROR, fPath: string): void => {
 const handleParseError = (parseErrCode: PARSE_ERROR, fPath: string): void => {
   switch (parseErrCode) {
     case 4:
-      console.log(`${fPath} - not a valid JSON file.`);
-      throw Error(); // FIXME: figure out how to handle it
+      throw Error(`${fPath} - not a valid JSON file.`); // FIXME: figure out how to handle it
       return process.exit(parseErrCode);
     default:
       (parseErrCode: empty); /* eslint-disable-line */
@@ -59,10 +66,15 @@ export const readJsonSchema = (fPath: string): Node => {
     handleReadError(readErrCode, fPath);
   } else {
     const parsedData = parseFile(data);
+
     if (typeof parsedData === 'number') {
       const parseErrCode = parsedData;
       handleParseError(parseErrCode, fPath);
     } else {
+      console.log(`\nPARSED DATA: ${JSON.stringify(parsedData)} \n`);
+      if (Object.keys(parsedData).length === 1) {
+        throw new Error(`${fPath} - empty json schema`);
+      }
       return parsedData;
     }
   }

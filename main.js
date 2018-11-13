@@ -1,5 +1,6 @@
 // @flow
 import 'regenerator-runtime/runtime';
+import fs from 'fs';
 
 import { readJsonSchema } from './src/reader/f_reader';
 import { parseCliArgs } from './src/cli/parser';
@@ -32,6 +33,10 @@ import { getPathsToSchemas } from './src/reader/tree_reader';
 
 const emitter = new Emitter();
 
+const notValidJsons = [];
+const nullNodes = [];
+const emptyJSONSchemas = [];
+
 const generateModule = (source: string, dest: string, name: string) => {
   try {
     emitter.reset();
@@ -44,8 +49,16 @@ const generateModule = (source: string, dest: string, name: string) => {
     writeFile(dest, jsModule);
     console.log(`Generating ${dest} - ${jsModule.length}`);
   } catch (e) {
+    if (e.message.includes('- empty json schema')) {
+      emptyJSONSchemas.push(e);
+    } else if (e.message.includes('not a valid JSON file')) {
+      notValidJsons.push(e);
+    } else if (e.message.includes(`Can't process "null" node`)) {
+      nullNodes.push(source + e.message);
+    } else {
+      console.error(`Fail to generate js module for ${source} - ${e}`);
+    }
     // console.error(`Fail to generate js module for ${source}`);
-    console.error(`Fail to generate js module for ${source} - ${e}`);
   }
 };
 
@@ -56,13 +69,26 @@ const main = async () => {
 
   const pathsToSchemas = getPathsToSchemas('./test_schemas/');
 
-  let id = 0;
+  let id = 500;
 
   console.log('SCHEMAS AMOUNT: ', pathsToSchemas.length);
+
+  const mapping = JSON.parse(fs.readFileSync('./manifest.json').toString());
+
   pathsToSchemas.forEach(pathToSchema => {
-    generateModule(pathToSchema, `./schemas/${id}.js`, id.toString());
-    id++;
+    let resultingPath = mapping[pathToSchema];
+    if (!resultingPath) {
+      resultingPath = `./newSchemas/${id}.js`;
+      id++;
+      console.log('GEN NEW NAME');
+    }
+
+    generateModule(pathToSchema, resultingPath, id.toString());
   });
+  console.log(`\n\n\n NOT VALID JSONS (${notValidJsons.length}):\n ${notValidJsons.join('\n')}`);
+  console.log(`\n\n\n NULL NODES (${nullNodes.length}):\n ${nullNodes.join('\n')}`);
+  console.log(`\n\n\n EMPTY SHEMAS (${emptyJSONSchemas.length}):\n ${emptyJSONSchemas.join('\n')}`);
+
   console.log('MAIN END');
 };
 

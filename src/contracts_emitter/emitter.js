@@ -48,7 +48,7 @@ export class Emitter {
     ) {
       this.result += "('')"; // Tailing call to generate validator func
     }
-    console.log(this.result);
+
     // try {
     // FIXME: use prettier in a more smart way - prettier.resolveConfig
     // avoid passing object with options directly
@@ -108,6 +108,16 @@ export class Emitter {
       }
     }
     throw new Error(`"${type}" type is not supported.`);
+  }
+
+  // FIXME: FIGURE OUT HOW TO HANDLE IT
+  emitNullType(varName: ?string) {
+    if (null != varName) {
+      this.emitPrintTab('current');
+      this.append(`"${varName}": ${'null'},\n`);
+    } else {
+      this.append(`null,\n`);
+    }
   }
 
   emitObjectType(varName: ?string) {

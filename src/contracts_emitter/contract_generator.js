@@ -1,4 +1,8 @@
 // @flow
+
+// FIXME: HOW TO HANDLE SEVERAL TYPES
+// /Users/anton.kravchenko/typed-contracts-generator/test_schemas/result/data/airings/GET/0_schema
+
 import { Emitter } from './emitter';
 import type { Node } from './types';
 import { isObject, isString } from 'typed-contracts';
@@ -53,6 +57,10 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
 
       break;
     }
+    // case 'null': {
+    //   emitter.emitNullType(varName);
+    //   break;
+    // }
     default: {
       (source.type: empty);
       throw new Error(`Can't process "${source.type}" node.`);

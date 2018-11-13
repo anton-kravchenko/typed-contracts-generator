@@ -5,5 +5,6 @@ import { spawnSync } from 'child_process';
 export const getPathsToSchemas = (dir: string): Array<string> => {
   const child = spawnSync('find', ['test_schemas', '-type', 'f', '-name', '0_schema']);
   // FIXME: track errors
-  return child.stdout.toString().split('\n');
+  const paths = child.stdout.toString().split('\n');
+  return paths.slice(0, paths.length - 2);
 };
