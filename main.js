@@ -36,6 +36,12 @@ const emitter = new Emitter();
 const notValidJsons = [];
 const nullNodes = [];
 const emptyJSONSchemas = [];
+const multiDimArrays = [];
+const emptyObjects = [];
+const unexpectedNodeFormat = [];
+const emptyArrays = [];
+
+let generatedWithoutErrors = 0;
 
 const generateModule = (source: string, dest: string, name: string) => {
   try {
@@ -48,13 +54,22 @@ const generateModule = (source: string, dest: string, name: string) => {
     const jsModule = generateJsModule(contract, 'SearchAutocomplete');
     writeFile(dest, jsModule);
     console.log(`Generating ${dest} - ${jsModule.length}`);
+    generatedWithoutErrors++;
   } catch (e) {
     if (e.message.includes('- empty json schema')) {
       emptyJSONSchemas.push(e);
     } else if (e.message.includes('not a valid JSON file')) {
       notValidJsons.push(e);
     } else if (e.message.includes(`Can't process "null" node`)) {
-      nullNodes.push(source + e.message);
+      nullNodes.push(source + ' ' + e.message);
+    } else if (e.message.includes('"array" type is not supported')) {
+      multiDimArrays.push(source + ' ', e.message);
+    } else if (e.message.includes('should have "properties" field')) {
+      emptyObjects.push(e);
+    } else if (e.message.includes(`Can't process "undefined" node.`)) {
+      unexpectedNodeFormat.push(e);
+    } else if (e.message.includes(`Proper array node should have "items" field:`)) {
+      emptyArrays.push(e);
     } else {
       console.error(`Fail to generate js module for ${source} - ${e}`);
     }
@@ -64,8 +79,6 @@ const generateModule = (source: string, dest: string, name: string) => {
 
 const main = async () => {
   const opts = parseCliArgs();
-
-  console.log('OPTIONS FROM MAIN1:', opts);
 
   const pathsToSchemas = getPathsToSchemas('./test_schemas/');
 
@@ -85,9 +98,26 @@ const main = async () => {
 
     generateModule(pathToSchema, resultingPath, id.toString());
   });
-  console.log(`\n\n\n NOT VALID JSONS (${notValidJsons.length}):\n ${notValidJsons.join('\n')}`);
-  console.log(`\n\n\n NULL NODES (${nullNodes.length}):\n ${nullNodes.join('\n')}`);
-  console.log(`\n\n\n EMPTY SHEMAS (${emptyJSONSchemas.length}):\n ${emptyJSONSchemas.join('\n')}`);
+  // console.log(`\n\n\n NOT VALID JSONS (${notValidJsons.length}):\n ${notValidJsons.join('\n')}`);
+  // console.log(`\n\n\n NULL NODES (${nullNodes.length}):\n ${nullNodes.join('\n')}`);
+  // console.log(`\n\n\n EMPTY SHEMAS (${emptyJSONSchemas.length}):\n ${emptyJSONSchemas.join('\n')}`);
+  // console.log(`\n\n\n MULTIDIM ARRAYS (${multiDimArrays.length}):\n ${multiDimArrays.join('\n')}`);
+
+  console.log(`\nGENERATED WITHOUT ERRORS: ${generatedWithoutErrors}\n`);
+
+  console.log(
+    `\nERRORS: ${notValidJsons.length +
+      nullNodes.length +
+      emptyJSONSchemas.length +
+      multiDimArrays.length}`,
+  );
+  console.log(`NOT VALID JSONS (${notValidJsons.length})`);
+  console.log(`NULL NODES (${nullNodes.length})`);
+  console.log(`EMPTY SHEMAS (${emptyJSONSchemas.length})`);
+  console.log(`MULTIDIM ARRAYS (${multiDimArrays.length})`);
+  console.log(`EMPTY OBJECTS (${emptyObjects.length})`);
+  console.log(`UNEXPECTED NODE FORMAT (${unexpectedNodeFormat.length})`);
+  console.log(`EMPTY ARRAYS (${emptyArrays.length})`);
 
   console.log('MAIN END');
 };

@@ -267,7 +267,7 @@ test('334', () => {
         viewingWindow: isString,
       }),
     }),
-    errorCode: isNumber,
+    errorCode: isNumber.optional,
     errorMessage: isString,
     portalData: isString,
     privateData: isString,

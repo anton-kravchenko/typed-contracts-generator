@@ -20,13 +20,17 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
       emitter.emitValType('string', varName);
       break;
     case 'object': {
-      const { required, properties } = source;
-      if (!required || !properties) {
+      const { properties } = source;
+      let { required } = source;
+
+      if (!properties) {
         throw new Error(
-          `Proper object node should have "required" and "properties" fields: ${JSON.stringify(
-            source,
-          )}`,
+          `Proper object node should have "properties" field: ${JSON.stringify(source)}`,
         );
+      }
+      if (!required) {
+        console.error('Emulating "required" object field');
+        required = Object.keys(properties);
       }
 
       emitter.emitObjectType(varName);

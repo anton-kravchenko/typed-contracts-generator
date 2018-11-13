@@ -71,7 +71,6 @@ export const readJsonSchema = (fPath: string): Node => {
       const parseErrCode = parsedData;
       handleParseError(parseErrCode, fPath);
     } else {
-      console.log(`\nPARSED DATA: ${JSON.stringify(parsedData)} \n`);
       if (Object.keys(parsedData).length === 1) {
         throw new Error(`${fPath} - empty json schema`);
       }

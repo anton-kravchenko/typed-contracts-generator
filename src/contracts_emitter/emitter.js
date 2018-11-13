@@ -5,8 +5,9 @@ import prettier from 'prettier';
 
 // TODO: add tabulation
 const TAB_SIZE = 2;
-
+/// FIXME: Fail to generate js module for test_schemas/result/data/##undef_routes/GET/0_schema - handle multitypes
 // FIXME: remove code styling (tabs, spacing, e.t.c) from emitter
+// FIXME: HANDLE 2 dimensional arrays /Users/anton.kravchenko/typed-contracts-generator/test_schemas/result/data/v20/dol/shows/genres/GET/0_schema
 
 type Hook = {
   nestingLevel: number,
