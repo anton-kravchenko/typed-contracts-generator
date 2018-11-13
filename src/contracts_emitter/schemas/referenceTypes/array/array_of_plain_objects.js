@@ -22,10 +22,15 @@ export const schema = {
     },
   },
 };
+// const c = isArray(array((valueName, value) =>
+//   isObject({
+//     a: isNumber,
+//   })(valueName, value),
+// )('')
 
-export const contract = `isArray(
+export const contract = `isArray((valueName, value) =>
   isObject({
     a: isNumber,
-  })(''),
+  })(valueName, value),
 )('');
 `;

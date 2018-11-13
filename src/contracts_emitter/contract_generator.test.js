@@ -124,7 +124,7 @@ it('should properly emit array of booleans', () => {
 });
 
 // TODO: add nested array example
-it('should properly emit array of plain objects', () => {
+it.only('should properly emit array of plain objects', () => {
   generateContract(arrayOfPlainObjectsSchema, emitter);
   expect(emitter.extract()).toBe(arrayOfPlainObjectsContract);
 });

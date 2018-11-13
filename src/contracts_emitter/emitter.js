@@ -8,10 +8,21 @@ const TAB_SIZE = 2;
 
 // FIXME: remove code styling (tabs, spacing, e.t.c) from emitter
 
+type Hook = {
+  nestingLevel: number,
+  hook: (type: string) => boolean,
+};
+
 export class Emitter {
   tabsAmount: number = 0;
 
+  nestingLevel: number = 0;
+
   result: string = '';
+
+  preHooks: Array<Hook> = [];
+
+  postHooks: Array<Hook> = [];
 
   append = (s: string): string => (this.result += s);
 
@@ -58,6 +69,8 @@ export class Emitter {
   reset = (): void => {
     this.result = '';
     this.tabsAmount = 0;
+    this.preHooks = [];
+    this.postHooks = [];
   };
 
   incrementTabsAmount = (): number => ++this.tabsAmount;
@@ -97,6 +110,9 @@ export class Emitter {
   }
 
   emitObjectType(varName: ?string) {
+    this.applyPreHook('object');
+    this.increaseNesting();
+
     const m = NodeEmitContractMapping.get('object'); // TODO: add type NodeTag for type
     if (m) {
       this.emitPrintTab('current');
@@ -120,6 +136,9 @@ export class Emitter {
           : `${m}(`,
       );
 
+      this.addArrayPreHook();
+      this.addArrayPostHook();
+
       return;
     }
   }
@@ -141,18 +160,94 @@ export class Emitter {
   }
 
   emitCloseObject() {
+    this.decreaseNesting();
+
     this.result = this.cleanTailTrailingComasAndNewLines(this.result);
     this.result += ',\n';
     this.deleteTab();
-    this.append("})(''),\n");
+    this.append('})');
+    if (false === this.applyPostHook('object')) {
+      this.append("(''),\n");
+    } else {
+      this.append(',');
+    }
   }
 
-  emitCloseArray() {
+  emitCloseArray(type: string) {
     this.result = this.cleanTailTrailingComasAndNewLines(this.result);
-    this.append(")(''),\n");
+    this.applyPostHook(type);
+    this.append('),\n');
+    // this.append(")(''),\n"); // FIXME: CHECK IT
   }
 
   emitCleanTailingComasAndNewLines() {
     this.result = this.cleanTailTrailingComasAndNewLines(this.result);
+  }
+
+  // HOOKS
+  preArrayOfObjectsHook = (type: string): boolean => {
+    // FIXME: USE NODE TYPE ALIAS INSTEAD
+    if (type === 'object') {
+      this.append('(valueName, value) =>\n');
+      return true;
+    }
+    return false;
+  };
+
+  postArrayOfObjectsHook = (type: string): boolean => {
+    // FIXME: USE NODE TYPE ALIAS INSTEAD
+    if (type === 'object') {
+      this.append('(valueName, value),\n');
+      return true;
+    }
+    return false;
+  };
+
+  addArrayPreHook() {
+    this.preHooks.push({ nestingLevel: this.nestingLevel, hook: this.preArrayOfObjectsHook });
+  }
+
+  addArrayPostHook() {
+    this.postHooks.push({ nestingLevel: this.nestingLevel, hook: this.postArrayOfObjectsHook });
+  }
+
+  // FIXME: USE NODE INSTEAD
+  applyPreHook(type: string): boolean {
+    const hook = this.preHooks.pop();
+    if (hook) {
+      if (this.nestingLevel === hook.nestingLevel) {
+        return hook.hook(type);
+      } else {
+        this.preHooks.push(hook); // return hook to its place
+      }
+    }
+    return false;
+  }
+
+  // FIXME: USE NODE INSTEAD
+  applyPostHook(type: string): boolean {
+    const hook = this.postHooks.pop();
+    if (hook) {
+      if (this.nestingLevel === hook.nestingLevel) {
+        return hook.hook(type);
+      } else {
+        this.postHooks.push(hook); // return hook to its place
+      }
+    }
+    return true;
+  }
+
+  // NESTING
+  increaseNesting(): number {
+    // FIXME: nesting is the same as tabulation
+    return (this.nestingLevel += 1);
+  }
+
+  decreaseNesting(): number {
+    // FIXME: nesting is the same as tabulation
+    if (this.nestingLevel > 0) {
+      return (this.nestingLevel -= 1);
+    }
+    throw Error(`Nesting is less then 0.`);
   }
 }

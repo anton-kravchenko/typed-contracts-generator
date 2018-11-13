@@ -49,7 +49,7 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
         emitter.emitValType(items.type === 'integer' ? 'number' : items.type);
       }
       emitter.emitCleanTailingComasAndNewLines(); // FIXME: bad implementation
-      emitter.emitCloseArray(); // FIXME: bad implementation
+      emitter.emitCloseArray(items.type); // FIXME: bad implementation
 
       break;
     }
