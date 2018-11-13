@@ -77,11 +77,15 @@ const generateModule = (source: string, dest: string, name: string) => {
   }
 };
 
+// TODO: OPTIONAl test_schemas/result/data/admin/api/receivers/:receiver_id/GET/0_schema
+
 const main = async () => {
   const opts = parseCliArgs();
 
-  const pathsToSchemas = getPathsToSchemas('./test_schemas/');
-
+  // const pathsToSchemas = getPathsToSchemas('./test_schemas/');
+  const pathsToSchemas = [
+    'test_schemas/result/data/v:api_version/search/movies_and_shows/GET/0_schema',
+  ];
   let id = 500;
 
   console.log('SCHEMAS AMOUNT: ', pathsToSchemas.length);

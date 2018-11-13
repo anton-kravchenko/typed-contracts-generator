@@ -94,17 +94,22 @@ export class Emitter {
   };
 
   //  EMITTERS
-  emitValType(type: string, varName: ?string) {
+  emitValType(type: string, varName: ?string, optional: boolean = false) {
     if (type === 'boolean' || type === 'string' || type === 'number') {
       // TODO: add type NodeTag for type
       const m = NodeEmitContractMapping.get(type);
       if (m) {
         if (null != varName) {
           this.emitPrintTab('current');
-          this.append(`"${varName}": ${m},\n`);
+          this.append(`"${varName}": ${m}`);
         } else {
-          this.append(`${m},\n`);
+          this.append(`${m}`);
         }
+        if (true === optional) {
+          console.log('Emitting optional string type.');
+          this.append('.optional');
+        }
+        this.append(`,\n`);
         return;
       }
     }

@@ -8,6 +8,10 @@ import type { Node } from './types';
 import { isObject, isString } from 'typed-contracts';
 
 export const generateContract = (source: Node, emitter: Emitter, varName: ?string): void => {
+  if (Array.isArray(source.type)) {
+    source.type = source.type.join(','); // FIXME: this breaks tagged literal Node type
+  }
+
   switch (source.type) {
     case 'integer':
     case 'number':
@@ -61,6 +65,20 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
 
       break;
     }
+    case 'null,string':
+    case 'string,null': {
+      emitter.emitValType('string', varName, true);
+      break;
+    }
+    case 'null,integer':
+    case 'integer,null': {
+      emitter.emitValType('number', varName, true);
+      break;
+    }
+    // case 'boolean,string': {
+    //   emitter.emitValType('string', varName, true);
+    //   break;
+    // }
     // case 'null': {
     //   emitter.emitNullType(varName);
     //   break;
