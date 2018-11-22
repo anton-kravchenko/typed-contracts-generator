@@ -79,8 +79,12 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
     //   emitter.emitValType('string', varName, true);
     //   break;
     // }
-    // case 'null': {
-    //   emitter.emitNullType(varName);
+    case 'null': {
+      emitter.emitNullType(varName);
+      break;
+    }
+    // case 'integer,string': {
+    //   emitter.emitValType('string', varName, true);
     //   break;
     // }
     default: {

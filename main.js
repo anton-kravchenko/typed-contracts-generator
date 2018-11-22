@@ -51,9 +51,10 @@ const generateModule = (source: string, dest: string, name: string) => {
     generateContract(data, emitter);
     const contract = emitter.extract();
 
-    const jsModule = generateJsModule(contract, 'SearchAutocomplete');
+    const jsModule = `\n// PATH: ${source}` + generateJsModule(contract, 'SearchAutocomplete');
+
     writeFile(dest, jsModule);
-    console.log(`Generating ${dest} - ${jsModule.length}`);
+    console.log(`Generating ${dest} - ${jsModule.length} - ${source}`);
     generatedWithoutErrors++;
   } catch (e) {
     if (e.message.includes('- empty json schema')) {
@@ -82,13 +83,9 @@ const generateModule = (source: string, dest: string, name: string) => {
 const main = async () => {
   const opts = parseCliArgs();
 
-  // const pathsToSchemas = getPathsToSchemas('./test_schemas/');
-  const pathsToSchemas = [
-    'test_schemas/result/data/v:api_version/search/movies_and_shows/GET/0_schema',
-  ];
-  let id = 500;
+  const pathsToSchemas = getPathsToSchemas('./test_schemas/');
 
-  console.log('SCHEMAS AMOUNT: ', pathsToSchemas.length);
+  let id = 500;
 
   const mapping = JSON.parse(fs.readFileSync('./manifest.json').toString());
 
@@ -107,13 +104,22 @@ const main = async () => {
   // console.log(`\n\n\n EMPTY SHEMAS (${emptyJSONSchemas.length}):\n ${emptyJSONSchemas.join('\n')}`);
   // console.log(`\n\n\n MULTIDIM ARRAYS (${multiDimArrays.length}):\n ${multiDimArrays.join('\n')}`);
 
-  console.log(`\nGENERATED WITHOUT ERRORS: ${generatedWithoutErrors}\n`);
+  console.log('\nSCHEMAS AMOUNT: ', pathsToSchemas.length);
+  console.log(
+    `\nGENERATED WITHOUT ERRORS: ${generatedWithoutErrors} - ${(
+      (generatedWithoutErrors / pathsToSchemas.length) *
+      100
+    ).toFixed(2)} %\n`,
+  );
 
   console.log(
     `\nERRORS: ${notValidJsons.length +
       nullNodes.length +
       emptyJSONSchemas.length +
-      multiDimArrays.length}`,
+      multiDimArrays.length +
+      emptyObjects.length +
+      unexpectedNodeFormat.length +
+      emptyArrays.length}`,
   );
   console.log(`NOT VALID JSONS (${notValidJsons.length})`);
   console.log(`NULL NODES (${nullNodes.length})`);

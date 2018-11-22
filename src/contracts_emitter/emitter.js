@@ -118,11 +118,16 @@ export class Emitter {
 
   // FIXME: FIGURE OUT HOW TO HANDLE IT
   emitNullType(varName: ?string) {
-    if (null != varName) {
-      this.emitPrintTab('current');
-      this.append(`"${varName}": ${'null'},\n`);
+    const m = NodeEmitContractMapping.get('null');
+    if (m) {
+      if (null != varName) {
+        this.emitPrintTab('current');
+        this.append(`"${varName}": ${m},\n`);
+      } else {
+        this.append(`${m},\n`);
+      }
     } else {
-      this.append(`null,\n`);
+      throw Error(`Can't find contract for null`);
     }
   }
 
