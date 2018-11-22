@@ -72,6 +72,13 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
 
       break;
     }
+    case 'array,null': {
+      source.type = 'array';
+      generateContract(source, emitter, varName);
+      emitter.emitOptionalType();
+      console.log('RAW EMIT:', emitter.extractRaw());
+      break;
+    }
     case 'null,string':
     case 'string,null': {
       emitter.emitValType('string', varName, true);

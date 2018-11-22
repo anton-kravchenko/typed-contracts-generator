@@ -47,7 +47,9 @@ export class Emitter {
       this.result[this.result.length - 1] !== '{' &&
       this.result[this.result.length - 1] !== '('
     ) {
-      this.result += "('')"; // Tailing call to generate validator func
+      if (this.result.indexOf('optional') !== this.result.length - 'optional'.length) {
+        this.result += "('')"; // Tailing call to generate validator func
+      }
     }
 
     // try {
@@ -69,6 +71,10 @@ export class Emitter {
     // return this.result;
     // }
   };
+
+  extractRaw() {
+    return this.result;
+  }
 
   reset = (): void => {
     this.result = '';
@@ -131,6 +137,12 @@ export class Emitter {
     } else {
       throw Error(`Can't find contract for null`);
     }
+  }
+
+  emitOptionalType() {
+    this.result = this.cleanTailTrailingComasAndNewLines(this.result);
+
+    this.append('.optional,\n');
   }
 
   emitUnionType(open: boolean, varName?: ?string) {
