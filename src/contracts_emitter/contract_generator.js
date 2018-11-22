@@ -62,7 +62,11 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
       }
 
       emitter.emitArrayType(varName);
-      if ('object' === items.type) {
+      // FIXME: array may have array in type
+      if (Array.isArray(items.type)) {
+        items.type = items.type.join(',');
+        generateContract(items, emitter);
+      } else if ('object' === items.type) {
         generateContract(items, emitter);
       } else {
         emitter.emitValType(items.type === 'integer' ? 'number' : items.type);
@@ -96,10 +100,7 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
       emitter.emitNullType(varName);
       break;
     }
-    // case 'integer,string': {
-    //   emitter.emitValType('string', varName, true);
-    //   break;
-    // }
+
     case 'integer,string': {
       emitter.emitUnionType(true, varName);
 

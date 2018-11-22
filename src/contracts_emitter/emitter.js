@@ -51,9 +51,7 @@ export class Emitter {
         this.result += "('')"; // Tailing call to generate validator func
       }
     }
-    if (this.postHooks.length) {
-      console.error(`\n\n\n\n\n\n\n\n\nPost hooks wasn't applied - ${this.postHooks}`);
-    }
+
     // console.log('\n\nRESULT: \n\n', this.result);
 
     // try {
@@ -67,9 +65,13 @@ export class Emitter {
       trailingComma: 'all',
       printWidth: 100,
     };
-
+    try {
+      return prettier.format(this.result, prettierConfig);
+    } catch (e) {
+      console.log('FAIL TO PARSE: ', this.result);
+      throw e;
+    }
     // console.log('\n\n\nRESULT:\n', this.result, '\n\n\n');
-    return prettier.format(this.result, prettierConfig);
     // } catch (e) {
     // That's expected - some of the tests may produce not sintactically invalid js
     // return this.result;
@@ -167,8 +169,11 @@ export class Emitter {
     }
   }
   emitObjectType(varName: ?string) {
+    if (varName == null) {
+      // CAUTION: only object types inside array require hooks
+      this.applyPreHook('object'); // CAUTION: SHOULD BE BEFORE increaseNesting
+    }
     this.increaseNesting();
-    this.applyPreHook('object');
 
     const m = NodeEmitContractMapping.get('object'); // TODO: add type NodeTag for type
     if (m) {
@@ -244,6 +249,7 @@ export class Emitter {
   // HOOKS
   preArrayOfObjectsHook = (type: string): boolean => {
     // FIXME: USE NODE TYPE ALIAS INSTEAD
+    console.log('HOOK type', type);
     if (type === 'object') {
       this.append('(valueName, value) =>\n');
       return true;
