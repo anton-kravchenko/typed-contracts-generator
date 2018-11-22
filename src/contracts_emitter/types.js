@@ -8,7 +8,8 @@ export type NodeTag =
   | 'string'
   | 'number'
   | 'integer'
-  | 'null';
+  | 'null'
+  | 'union'; // FIXME: check if its fine
 
 export type ContractType =
   | 'isObject'
@@ -16,7 +17,8 @@ export type ContractType =
   | 'isBoolean'
   | 'isString'
   | 'isNumber'
-  | 'isNull';
+  | 'isNull'
+  | 'isUnion';
 
 export type ValueNodeType<T, V: NodeTag> = {
   definitions: {},

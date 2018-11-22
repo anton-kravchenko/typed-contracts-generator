@@ -61,6 +61,8 @@ export class Emitter {
       trailingComma: 'all',
       printWidth: 100,
     };
+
+    console.log('\n\n\nRESULT:', this.result, '\n\n\n');
     return prettier.format(this.result, prettierConfig);
     // } catch (e) {
     // That's expected - some of the tests may produce not sintactically invalid js
@@ -131,6 +133,22 @@ export class Emitter {
     }
   }
 
+  emitUnionType(open: boolean, varName?: ?string) {
+    const m = NodeEmitContractMapping.get('union');
+    if (m) {
+      if (open) {
+        if (varName != null) {
+          this.append(`${varName}: ${m}(`);
+        } else {
+          this.append(`${m}(`);
+        }
+      } else {
+        this.append(`),`);
+      }
+    } else {
+      throw Error(`Can't find contract for union`);
+    }
+  }
   emitObjectType(varName: ?string) {
     this.applyPreHook('object');
     this.increaseNesting();

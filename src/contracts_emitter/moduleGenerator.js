@@ -1,7 +1,15 @@
 // @flow
 import prettier from 'prettier';
 
-const contractsNames = ['isObject', 'isArray', 'isNumber', 'isBoolean', 'isString'];
+const contractsNames = [
+  'isObject',
+  'isArray',
+  'isNumber',
+  'isBoolean',
+  'isString',
+  'isUnion',
+  'isNull',
+];
 
 export const generateHeader = (contract: string): string => {
   const validatorImport = `import { validate, type ExtractType } from './validator';`;

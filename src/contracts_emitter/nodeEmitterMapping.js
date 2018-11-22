@@ -8,3 +8,4 @@ NodeEmitContractMapping.set('boolean', 'isBoolean');
 NodeEmitContractMapping.set('string', 'isString');
 NodeEmitContractMapping.set('number', 'isNumber');
 NodeEmitContractMapping.set('null', 'isNull');
+NodeEmitContractMapping.set('union', 'isUnion');

@@ -49,9 +49,16 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
       break;
     }
     case 'array': {
-      const { items } = source;
+      let { items } = source;
       if (!items) {
-        throw new Error(`Proper array node should have "items" field: ${JSON.stringify(source)}`);
+        const errMessage = `Proper array node should have "items" field: ${JSON.stringify(source)}`;
+        console.error(errMessage);
+        console.log('EMULATING STRING ITEMS');
+        items = { type: 'string' };
+        if (false) {
+          // FIXME: ADD MODE, which tries to fix some errors and report them
+          throw new Error(errMessage);
+        }
       }
 
       emitter.emitArrayType(varName);
@@ -87,6 +94,60 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
     //   emitter.emitValType('string', varName, true);
     //   break;
     // }
+    case 'integer,string': {
+      emitter.emitUnionType(true, varName);
+
+      const intNode: Node = {
+        type: 'number',
+        definitions: {},
+        $schema: '',
+        $id: '',
+        title: '',
+        default: 0,
+      };
+
+      const srtNode: Node = {
+        type: 'string',
+        definitions: {},
+        $schema: '',
+        $id: '',
+        title: '',
+        default: '',
+      };
+
+      generateContract(intNode, emitter);
+      generateContract(srtNode, emitter);
+
+      emitter.emitUnionType(false);
+      break;
+    }
+    case 'boolean,string': {
+      emitter.emitUnionType(true, varName);
+
+      const intNode: Node = {
+        type: 'number',
+        definitions: {},
+        $schema: '',
+        $id: '',
+        title: '',
+        default: 0,
+      };
+
+      const boolNode: Node = {
+        type: 'boolean',
+        definitions: {},
+        $schema: '',
+        $id: '',
+        title: '',
+        default: false,
+      };
+
+      generateContract(intNode, emitter);
+      generateContract(boolNode, emitter);
+
+      emitter.emitUnionType(false);
+      break;
+    }
     default: {
       (source.type: empty);
       throw new Error(`Can't process "${source.type}" node.`);
