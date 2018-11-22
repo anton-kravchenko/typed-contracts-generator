@@ -313,3 +313,20 @@ test('empty objects', () => {
   const base = { error: '1', timer_preferences: { someAdditionalData: 123 } };
   expect(contract(base)).toEqual(base);
 });
+
+test('optional object field', () => {
+  const contract = isObject({
+    error: isObject({
+      code: isNumber,
+      description: isString,
+    }),
+  }).optional('');
+
+  let base = {
+    error: { code: 1, description: '123' },
+  };
+  expect(contract(base)).toEqual(base);
+
+  base = undefined; // optional object may be undefined
+  expect(contract(base)).toEqual(base);
+});

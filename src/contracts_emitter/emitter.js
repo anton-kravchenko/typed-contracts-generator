@@ -47,9 +47,9 @@ export class Emitter {
       this.result[this.result.length - 1] !== '{' &&
       this.result[this.result.length - 1] !== '('
     ) {
-      if (this.result.indexOf('optional') !== this.result.length - 'optional'.length) {
-        this.result += "('')"; // Tailing call to generate validator func
-      }
+      // if (this.result.indexOf('optional') !== this.result.length - 'optional'.length) {
+      this.result += "('')"; // Tailing call to generate validator func
+      // }
     }
 
     // console.log('\n\nRESULT: \n\n', this.result);

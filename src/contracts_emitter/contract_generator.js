@@ -12,6 +12,21 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
     source.type = source.type.join(','); // FIXME: this breaks tagged literal Node type
   }
 
+  if (source['anyOf']) {
+    if (source.anyOf.length === 2) {
+      console.log(source.anyOf[0].type, source.anyOf[1].type);
+      if (source.anyOf[0].type === 'null' || source.anyOf[0].type === 'object') {
+        if (source.anyOf[1].type === 'object' || source.anyOf[1].type === 'null') {
+          // nullable object
+          const objSource = source.anyOf[1].type === 'object' ? source.anyOf[1] : source.anyOf[0];
+          objSource.type = 'object,null';
+          // FIXME: may generate union with isNull instead of optionals
+          generateContract(objSource, emitter);
+          return;
+        }
+      }
+    }
+  }
   switch (source.type) {
     case 'integer':
     case 'number':
@@ -52,6 +67,13 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
       });
 
       emitter.emitCloseObject(); // FIXME: bad implementation
+
+      break;
+    }
+    case 'object,null': {
+      source.type = 'object';
+      generateContract(source, emitter);
+      emitter.emitOptionalType();
 
       break;
     }
