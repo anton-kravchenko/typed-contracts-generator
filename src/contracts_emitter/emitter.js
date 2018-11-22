@@ -62,7 +62,6 @@ export class Emitter {
       printWidth: 100,
     };
 
-    console.log('\n\n\nRESULT:', this.result, '\n\n\n');
     return prettier.format(this.result, prettierConfig);
     // } catch (e) {
     // That's expected - some of the tests may produce not sintactically invalid js
