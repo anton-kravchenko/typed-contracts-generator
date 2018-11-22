@@ -1,6 +1,6 @@
 // @flow
 
-import { validateSearchAutocompleteContract } from '../../schemas/335';
+// import { validateSearchAutocompleteContract } from '../../schemas/335';
 import { isObject, isArray, isString, isNumber, isBoolean } from 'typed-contracts';
 import { validate, type ExtractType } from '../../src/contracts_emitter/validator';
 
@@ -292,4 +292,24 @@ test('334', () => {
 
   const r = val(obj);
   expect(r).toEqual(obj);
+});
+
+test('multidimensional array', () => {
+  const contract = isObject({
+    sorts: isArray(isArray(isString)),
+  })('');
+
+  const base = { sorts: [['1'], ['1']] };
+
+  expect(contract(base)).toEqual(base);
+});
+
+test('empty objects', () => {
+  const contract = isObject({
+    error: isString,
+    timer_preferences: isObject({}),
+  })('');
+
+  const base = { error: '1', timer_preferences: { someAdditionalData: 123 } };
+  expect(contract(base)).toEqual(base);
 });

@@ -28,10 +28,17 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
       let { required } = source;
 
       if (!properties) {
-        throw new Error(
+        // throw new Error(
+        //   `Proper object node should have "properties" field: ${JSON.stringify(source)}`,
+        // );
+
+        // FIXME: add tolerant mode??? or remove
+        console.error(
           `Proper object node should have "properties" field: ${JSON.stringify(source)}`,
         );
+        required = [];
       }
+
       if (!required) {
         console.error('Emulating "required" object field');
         required = Object.keys(properties);
@@ -67,6 +74,8 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
         items.type = items.type.join(',');
         generateContract(items, emitter);
       } else if ('object' === items.type) {
+        generateContract(items, emitter);
+      } else if ('array' === items.type) {
         generateContract(items, emitter);
       } else {
         emitter.emitValType(items.type === 'integer' ? 'number' : items.type);

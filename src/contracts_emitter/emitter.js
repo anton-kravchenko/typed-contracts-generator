@@ -168,6 +168,7 @@ export class Emitter {
       throw Error(`Can't find contract for union`);
     }
   }
+
   emitObjectType(varName: ?string) {
     if (varName == null) {
       // CAUTION: only object types inside array require hooks
@@ -225,7 +226,7 @@ export class Emitter {
     this.decreaseNesting();
 
     this.result = this.cleanTailTrailingComasAndNewLines(this.result);
-    this.result += ',\n';
+    // this.result += ',\n'; // FIXME: this breaks empty objects
     this.deleteTab();
     this.append('})');
     if (false === this.applyPostHook('object')) {
@@ -249,7 +250,6 @@ export class Emitter {
   // HOOKS
   preArrayOfObjectsHook = (type: string): boolean => {
     // FIXME: USE NODE TYPE ALIAS INSTEAD
-    console.log('HOOK type', type);
     if (type === 'object') {
       this.append('(valueName, value) =>\n');
       return true;
