@@ -62,6 +62,7 @@ export class Emitter {
       printWidth: 100,
     };
 
+    // console.log('\n\n\nRESULT:\n', this.result, '\n\n\n');
     return prettier.format(this.result, prettierConfig);
     // } catch (e) {
     // That's expected - some of the tests may produce not sintactically invalid js
@@ -149,8 +150,8 @@ export class Emitter {
     }
   }
   emitObjectType(varName: ?string) {
-    this.applyPreHook('object');
     this.increaseNesting();
+    this.applyPreHook('object');
 
     const m = NodeEmitContractMapping.get('object'); // TODO: add type NodeTag for type
     if (m) {
@@ -208,7 +209,7 @@ export class Emitter {
     if (false === this.applyPostHook('object')) {
       this.append("(''),\n");
     } else {
-      this.append(',');
+      this.append(',\n');
     }
   }
 
