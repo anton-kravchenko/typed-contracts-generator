@@ -54,7 +54,8 @@ export class Emitter {
     if (this.postHooks.length) {
       console.error(`\n\n\n\n\n\n\n\n\nPost hooks wasn't applied - ${this.postHooks}`);
     }
-    console.log('\n\nRESULT: \n\n', this.result);
+    // console.log('\n\nRESULT: \n\n', this.result);
+
     // try {
     // FIXME: use prettier in a more smart way - prettier.resolveConfig
     // avoid passing object with options directly
@@ -271,7 +272,7 @@ export class Emitter {
   applyPreHook(type: string): boolean {
     const hook = this.preHooks.pop();
     if (hook) {
-      if (this.nestingLevel - 1 === hook.nestingLevel) {
+      if (this.nestingLevel === hook.nestingLevel) {
         // FIXME: -1 is not acceptable
         return hook.hook(type);
       } else {
