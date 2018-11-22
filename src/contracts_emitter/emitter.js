@@ -51,7 +51,10 @@ export class Emitter {
         this.result += "('')"; // Tailing call to generate validator func
       }
     }
-
+    if (this.postHooks.length) {
+      console.error(`\n\n\n\n\n\n\n\n\nPost hooks wasn't applied - ${this.postHooks}`);
+    }
+    console.log('\n\nRESULT: \n\n', this.result);
     // try {
     // FIXME: use prettier in a more smart way - prettier.resolveConfig
     // avoid passing object with options directly
@@ -147,6 +150,7 @@ export class Emitter {
 
   emitUnionType(open: boolean, varName?: ?string) {
     const m = NodeEmitContractMapping.get('union');
+    this.append(this.tabulate());
     if (m) {
       if (open) {
         if (varName != null) {
@@ -267,9 +271,11 @@ export class Emitter {
   applyPreHook(type: string): boolean {
     const hook = this.preHooks.pop();
     if (hook) {
-      if (this.nestingLevel === hook.nestingLevel) {
+      if (this.nestingLevel - 1 === hook.nestingLevel) {
+        // FIXME: -1 is not acceptable
         return hook.hook(type);
       } else {
+        console.log('WRONG NESTING LEVEL', this.nestingLevel, hook.nestingLevel);
         this.preHooks.push(hook); // return hook to its place
       }
     }

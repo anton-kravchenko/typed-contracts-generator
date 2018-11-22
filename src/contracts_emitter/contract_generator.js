@@ -76,7 +76,6 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
       source.type = 'array';
       generateContract(source, emitter, varName);
       emitter.emitOptionalType();
-      console.log('RAW EMIT:', emitter.extractRaw());
       break;
     }
     case 'null,string':
