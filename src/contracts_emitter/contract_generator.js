@@ -10,6 +10,10 @@ import type { Node } from './types';
 import { isObject, isString } from 'typed-contracts';
 
 export const generateContract = (source: Node, emitter: Emitter, varName: ?string): void => {
+  if (source.type && source.type.includes(',')) {
+    // miltitype
+    source.type = source.type.split(',');
+  }
   if (Array.isArray(source.type)) {
     // source.type = source.type.join(','); // FIXME: this breaks tagged literal Node type
     emitter.emitUnionType(true, varName);

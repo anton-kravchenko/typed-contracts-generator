@@ -165,6 +165,7 @@ export class Emitter {
           this.append(`${m}(`);
         }
       } else {
+        this.result = this.cleanTailTrailingComasAndNewLines(this.result);
         this.append(`),`);
       }
     } else {
