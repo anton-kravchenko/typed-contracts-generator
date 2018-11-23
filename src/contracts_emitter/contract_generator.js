@@ -10,10 +10,6 @@ import type { Node } from './types';
 import { isObject, isString } from 'typed-contracts';
 
 export const generateContract = (source: Node, emitter: Emitter, varName: ?string): void => {
-  if (source.type && source.type.includes(',')) {
-    // miltitype
-    source.type = source.type.split(',');
-  }
   if (Array.isArray(source.type)) {
     // source.type = source.type.join(','); // FIXME: this breaks tagged literal Node type
     emitter.emitUnionType(true, varName);
@@ -25,6 +21,7 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
     return;
   }
 
+  console.log('\n\n\nsource', source);
   if (source['anyOf']) {
     emitter.emitUnionType(true, varName);
     source['anyOf'].forEach(node => {
@@ -116,12 +113,18 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
       emitter.emitArrayType(varName);
       // FIXME: array may have array in type
       if (Array.isArray(items.type)) {
-        items.type = items.type.join(',');
+        // items.type = items.type.join(','); // FIXME: check it
         generateContract(items, emitter);
       } else if ('object' === items.type) {
         generateContract(items, emitter);
       } else if ('array' === items.type) {
         generateContract(items, emitter);
+      } else if (Array.isArray(items.anyOf)) {
+        emitter.emitUnionType(true, null);
+        items.anyOf.forEach(node => {
+          generateContract(node, emitter, null);
+        });
+        emitter.emitUnionType(false);
       } else {
         emitter.emitValType(items.type === 'integer' ? 'number' : items.type);
       }
