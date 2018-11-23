@@ -3,13 +3,22 @@
 // FIXME: HOW TO HANDLE SEVERAL TYPES
 // /Users/anton.kravchenko/typed-contracts-generator/test_schemas/result/data/airings/GET/0_schema
 
+// FIXME: test_schemas/result/data/airings/GET/0_schema
+// airings: isUnion(isArray(isString), isNull, (valueName, value) => isObject({})), - "(valueName, value)" =>  is redundant
 import { Emitter } from './emitter';
 import type { Node } from './types';
 import { isObject, isString } from 'typed-contracts';
 
 export const generateContract = (source: Node, emitter: Emitter, varName: ?string): void => {
   if (Array.isArray(source.type)) {
-    source.type = source.type.join(','); // FIXME: this breaks tagged literal Node type
+    // source.type = source.type.join(','); // FIXME: this breaks tagged literal Node type
+    emitter.emitUnionType(true, varName);
+    source.type.forEach(type => {
+      generateContract({ type }, emitter, null);
+    });
+
+    emitter.emitUnionType(false);
+    return;
   }
 
   if (source['anyOf']) {
@@ -117,22 +126,22 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
 
       break;
     }
-    case 'array,null': {
-      source.type = 'array';
-      generateContract(source, emitter, varName);
-      emitter.emitOptionalType();
-      break;
-    }
-    case 'null,string':
-    case 'string,null': {
-      emitter.emitValType('string', varName, true);
-      break;
-    }
-    case 'null,integer':
-    case 'integer,null': {
-      emitter.emitValType('number', varName, true);
-      break;
-    }
+    // case 'array,null': {
+    //   source.type = 'array';
+    //   generateContract(source, emitter, varName);
+    //   emitter.emitOptionalType();
+    //   break;
+    // }
+    // case 'null,string':
+    // case 'string,null': {
+    //   emitter.emitValType('string', varName, true);
+    //   break;
+    // }
+    // case 'null,integer':
+    // case 'integer,null': {
+    //   emitter.emitValType('number', varName, true);
+    //   break;
+    // }
     // case 'boolean,string': {
     //   emitter.emitValType('string', varName, true);
     //   break;
