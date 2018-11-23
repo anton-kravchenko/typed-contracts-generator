@@ -13,29 +13,13 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
   }
 
   if (source['anyOf']) {
-    if (source.anyOf.length === 2) {
-      if (source.anyOf[0].type === 'null' || source.anyOf[0].type === 'object') {
-        if (source.anyOf[1].type === 'object' || source.anyOf[1].type === 'null') {
-          // nullable object
-          const objSource = source.anyOf[1].type === 'object' ? source.anyOf[1] : source.anyOf[0];
-          objSource.type = 'object,null';
-          // FIXME: may generate union with isNull instead of optionals
-          generateContract(objSource, emitter, varName);
-          return;
-        }
-      }
+    emitter.emitUnionType(true, varName);
+    source['anyOf'].forEach(node => {
+      generateContract(node, emitter, null); // null instead of property name because property is related to is union
+    });
 
-      if (source.anyOf[0].type === 'null' || source.anyOf[0].type === 'array') {
-        if (source.anyOf[1].type === 'array' || source.anyOf[1].type === 'null') {
-          // nullable array
-          const arrSource = source.anyOf[1].type === 'array' ? source.anyOf[1] : source.anyOf[0];
-          arrSource.type = 'array,null';
-          // FIXME: may generate union with isNull instead of optionals
-          generateContract(arrSource, emitter, varName);
-          return;
-        }
-      }
-    }
+    emitter.emitUnionType(false);
+    return;
   }
   switch (source.type) {
     case 'integer':

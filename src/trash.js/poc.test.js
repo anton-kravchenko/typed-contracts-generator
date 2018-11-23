@@ -1,7 +1,7 @@
 // @flow
 
 // import { validateSearchAutocompleteContract } from '../../schemas/335';
-import { isObject, isArray, isString, isNumber, isBoolean } from 'typed-contracts';
+import { isObject, isArray, isString, isNumber, isBoolean, isUnion } from 'typed-contracts';
 import { validate, type ExtractType } from '../../src/contracts_emitter/validator';
 
 const { array, object, string, union, ValidationError } = require('typed-contracts');
@@ -331,17 +331,57 @@ test('optional object field', () => {
   expect(contract(base)).toEqual(base);
 });
 
-const c = isObject({
-  count: isNumber.optional,
-  exception: isNull,
-  a: isArray((valueName, value) =>
+test('array of objects or just that object', () => {
+  const contract = isUnion(
     isObject({
-      description: isNull,
-      franchise_id: isNumber,
-      is_hd: isUnion(isNumber, isBoolean),
-      original_air_date: isNull,
-      player_type: isString,
-      title: isNull,
-    })(valueName, value),
-  ).optional,
-})('');
+      streams: isArray((valueName, value) =>
+        isObject({
+          network: isString,
+          is_mobile: isBoolean,
+          network_id: isUnion(isNumber, isString),
+          video_id: isUnion(isNumber, isString),
+        })(valueName, value),
+      ),
+      title: isString,
+    }),
+    isArray((valueName, value) =>
+      isObject({
+        streams: isArray((valueName, value) =>
+          isObject({
+            network: isString,
+            is_mobile: isBoolean,
+            network_id: isUnion(isNumber, isString),
+          })(valueName, value),
+        ),
+      })(valueName, value),
+    ),
+  )('');
+
+  const baseWithArray = {
+    streams: [
+      {
+        network: 'isString',
+        is_mobile: false,
+        network_id: 1,
+        video_id: '1',
+      },
+    ],
+    title: 'isString',
+  };
+
+  expect(contract(baseWithArray)).toEqual(baseWithArray);
+
+  const baseWithSingleObject = [
+    {
+      streams: [
+        {
+          network: 'isString',
+          is_mobile: false,
+          network_id: 1,
+          video_id: '1',
+        },
+      ],
+    },
+  ];
+  expect(contract(baseWithSingleObject)).toEqual(baseWithSingleObject);
+});
