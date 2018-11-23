@@ -125,6 +125,8 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
           generateContract(node, emitter, null);
         });
         emitter.emitUnionType(false);
+      } else if (items.type === 'null') {
+        emitter.emitNullType(null);
       } else {
         emitter.emitValType(items.type === 'integer' ? 'number' : items.type);
       }
