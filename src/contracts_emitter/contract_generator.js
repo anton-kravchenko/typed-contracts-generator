@@ -21,8 +21,7 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
     return;
   }
 
-  console.log('\n\n\nsource', source);
-  if (source['anyOf']) {
+  if (source.anyOf) {
     emitter.emitUnionType(true, varName);
     source['anyOf'].forEach(node => {
       generateContract(node, emitter, null); // null instead of property name because property is related to is union

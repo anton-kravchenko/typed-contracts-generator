@@ -20,46 +20,53 @@ export type ContractType =
   | 'isNull'
   | 'isUnion';
 
-export type ValueNodeType<T, V: NodeTag> = {
-  definitions: {},
-  $schema: string,
-  $id: string,
+export type ValueNodeType<T, V: NodeTag> = {|
+  $id?: string,
   type: V,
-  title: string,
-  default: T,
-};
+  title?: string,
+  default?: T,
+|};
+
 export type ReferenceTypeNode = ObjectNodeType | ArrayNodeType;
+
+// export type IntegerNode = {
+//   type: 'integer',
+// };
 
 export type NumberNode = ValueNodeType<number, 'number'>;
 export type IntegerNode = ValueNodeType<number, 'integer'>;
 export type StringNode = ValueNodeType<string, 'string'>;
 export type BooleanNode = ValueNodeType<boolean, 'boolean'>;
-export type NullNode = ValueNodeType<null, 'null'>;
-
-// TODO: schemas are almost equal - use generics
-export type ObjectNodeType = {
-  definitions: {},
-  $schema: string,
-  $id: string,
-  type: 'object',
-  title: string,
-  required?: Array<string>,
-  properties?: { [key: string]: Node },
+export type NullNode = {
+  type: 'null',
 };
 
-export type ArrayNodeType = {
-  definitions: {},
+// TODO: schemas are almost equal - use generics
+
+export type EmptySchemaType = {
   $schema: string,
-  $id: string,
-  type: 'array',
-  title: string,
-  items?: {
-    $id: '#/items',
-    type: NodeTag,
-    title: string, //
-    default: mixed, // TODO: improve
-    examples: Array<mixed>,
+  // $id?: string,
+};
+
+export type ObjectNodeType = {
+  type: 'object',
+  title?: string,
+  required?: Array<string>,
+  properties?: {
+    [key: string]:
+      | {
+          type: NodeTag, // | Array<NodeTag>,
+        }
+      | anyOfNode,
   },
+};
+
+export type anyOfNode = { anyOf: Array<ObjectNodeType | NullNode | ArrayNodeType> };
+
+export type ArrayNodeType = {
+  type: 'array',
+  title?: string,
+  items?: { type: NodeTag | Array<NodeTag> },
 };
 
 export type Node =
@@ -69,4 +76,6 @@ export type Node =
   | NullNode
   | IntegerNode
   | ObjectNodeType
-  | ArrayNodeType; // TODO: add array type
+  | ArrayNodeType // TODO: add array type
+  | anyOfNode;
+// | (EmptySchemaType & { type: Array<NodeTag> });

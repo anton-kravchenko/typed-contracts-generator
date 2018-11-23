@@ -1,7 +1,7 @@
 // @flow
 import 'regenerator-runtime/runtime';
 import fs from 'fs';
-
+// TODO: test_schemas/result/data/v:api_version/search/all/GET/0_schema - perfect for example and test - very big
 import { readJsonSchema } from './src/reader/f_reader';
 import { parseCliArgs } from './src/cli/parser';
 import { generateContract } from './src/contracts_emitter/contract_generator';
@@ -10,6 +10,8 @@ import { writeFile } from './src/writter/f_writter';
 import { generateJsModule } from './src/contracts_emitter/moduleGenerator';
 import { getPathsToSchemas } from './src/reader/tree_reader';
 
+// TODO: emit intermediate representation AST and then generate js code form it (esprima or babel)
+// TODO: make test for validation schema against Node type and Flow
 /* TODO:
  - parser:
    - null
@@ -29,6 +31,8 @@ import { getPathsToSchemas } from './src/reader/tree_reader';
   - get rid of react-scripts?
   - add version
   - add node version to pkj
+  
+  - add colorful output - red for error, yellow for warnings, green for regular logs
 */
 
 const emitter = new Emitter();
@@ -80,18 +84,31 @@ const generateModule = (source: string, dest: string, name: string) => {
 };
 
 // TODO: OPTIONAl test_schemas/result/data/admin/api/receivers/:receiver_id/GET/0_schema
+const generateNodeValidation = (fpath: string, id: number) => {
+  if (id > 600) {
+    return;
+  }
+  const header = `// @flow
+import type { Node } from '../src/contracts_emitter/types';
+
+const c: Node = `;
+  const file = header + fs.readFileSync(fpath).toString();
+  fs.writeFileSync(`./node_type_test/${id}.js`, file);
+};
 
 const main = async () => {
   const opts = parseCliArgs();
 
+  // GREAT FOR DEMO: /Users/anton.kravchenko/typed-contracts-generator/test_schemas/result/data/v20/dol/networks/:slug/categories_only/GET/0_schema
+
   const pathsToSchemas = getPathsToSchemas('./test_schemas/');
   // const pathsToSchemas = [
-  //   '/Users/anton.kravchenko/typed-contracts-generator/test_schemas/result/data/v:api_version/dol/celebrities/:person_id/airings/GET/0_schema',
+  //   '/Users/anton.kravchenko/typed-contracts-generator/test_schemas/result/data/v:api_version/search/all/GET/0_schema',
   // ];
 
   // console.log('FILTERED: ', pathsToSchemas);
   let id = 500;
-
+  let testId = 0;
   const mapping = JSON.parse(fs.readFileSync('./manifest.json').toString());
 
   pathsToSchemas.forEach(pathToSchema => {
@@ -99,10 +116,11 @@ const main = async () => {
     if (!resultingPath) {
       resultingPath = `./newSchemas/${id}.js`;
       id++;
+
       console.log('GEN NEW NAME');
     }
-
     generateModule(pathToSchema, resultingPath, id.toString());
+    generateNodeValidation(pathToSchema, testId++);
   });
   // console.log(`\n\n\n NOT VALID JSONS (${notValidJsons.length}):\n ${notValidJsons.join('\n')}`);
   // console.log(`\n\n\n NULL NODES (${nullNodes.length}):\n ${nullNodes.join('\n')}`);
