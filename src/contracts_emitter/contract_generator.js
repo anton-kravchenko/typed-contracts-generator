@@ -14,14 +14,24 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
 
   if (source['anyOf']) {
     if (source.anyOf.length === 2) {
-      console.log(source.anyOf[0].type, source.anyOf[1].type);
       if (source.anyOf[0].type === 'null' || source.anyOf[0].type === 'object') {
         if (source.anyOf[1].type === 'object' || source.anyOf[1].type === 'null') {
           // nullable object
           const objSource = source.anyOf[1].type === 'object' ? source.anyOf[1] : source.anyOf[0];
           objSource.type = 'object,null';
           // FIXME: may generate union with isNull instead of optionals
-          generateContract(objSource, emitter);
+          generateContract(objSource, emitter, varName);
+          return;
+        }
+      }
+
+      if (source.anyOf[0].type === 'null' || source.anyOf[0].type === 'array') {
+        if (source.anyOf[1].type === 'array' || source.anyOf[1].type === 'null') {
+          // nullable array
+          const arrSource = source.anyOf[1].type === 'array' ? source.anyOf[1] : source.anyOf[0];
+          arrSource.type = 'array,null';
+          // FIXME: may generate union with isNull instead of optionals
+          generateContract(arrSource, emitter, varName);
           return;
         }
       }
@@ -61,6 +71,14 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
 
       emitter.emitObjectType(varName);
 
+      if (Object.keys(properties).length !== required.length) {
+        console.error(
+          `Amount of properties in object doesn't match amount of required fields: properties - ${Object.keys(
+            properties,
+          )}, required - ${required} - emitting full list`, // FIXME: CALC delta between required and actual and add .optional postfix
+        );
+        // required = Object.keys(properties); - fixme - uncomment to enable generation of contracts for full list
+      }
       required.forEach(fieldName => {
         const node = properties[fieldName];
         generateContract(node, emitter, fieldName);
@@ -131,7 +149,7 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
       emitter.emitNullType(varName);
       break;
     }
-
+    case 'number,string':
     case 'integer,string': {
       emitter.emitUnionType(true, varName);
 

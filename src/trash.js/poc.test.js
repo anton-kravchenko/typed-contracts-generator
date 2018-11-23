@@ -330,3 +330,18 @@ test('optional object field', () => {
   base = undefined; // optional object may be undefined
   expect(contract(base)).toEqual(base);
 });
+
+const c = isObject({
+  count: isNumber.optional,
+  exception: isNull,
+  a: isArray((valueName, value) =>
+    isObject({
+      description: isNull,
+      franchise_id: isNumber,
+      is_hd: isUnion(isNumber, isBoolean),
+      original_air_date: isNull,
+      player_type: isString,
+      title: isNull,
+    })(valueName, value),
+  ).optional,
+})('');

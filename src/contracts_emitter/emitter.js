@@ -9,6 +9,9 @@ const TAB_SIZE = 2;
 // FIXME: remove code styling (tabs, spacing, e.t.c) from emitter
 // FIXME: HANDLE 2 dimensional arrays /Users/anton.kravchenko/typed-contracts-generator/test_schemas/result/data/v20/dol/shows/genres/GET/0_schema
 
+// FIXME: /Users/anton.kravchenko/typed-contracts-generator/test_schemas/result/data/v:api_version/dol/celebrities/:person_id/airings/GET/0_schema
+// required field may have less fields than actual object
+
 type Hook = {
   nestingLevel: number,
   hook: (type: string) => boolean,
