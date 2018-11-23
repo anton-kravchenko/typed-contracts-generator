@@ -77,7 +77,7 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
             properties,
           )}, required - ${required} - emitting full list`, // FIXME: CALC delta between required and actual and add .optional postfix
         );
-        // required = Object.keys(properties); - fixme - uncomment to enable generation of contracts for full list
+        required = Object.keys(properties); // - fixme - uncomment to enable generation of contracts for full list
       }
       required.forEach(fieldName => {
         const node = properties[fieldName];

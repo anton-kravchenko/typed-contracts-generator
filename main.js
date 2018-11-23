@@ -51,26 +51,27 @@ const generateModule = (source: string, dest: string, name: string) => {
     generateContract(data, emitter);
     const contract = emitter.extract();
 
-    const jsModule = `\n// PATH: ${source}` + generateJsModule(contract, 'SearchAutocomplete');
+    const jsModule =
+      `\n// PATH to schema: ${source}\n` + generateJsModule(contract, 'SearchAutocomplete');
 
     writeFile(dest, jsModule);
     console.log(`Generating ${dest} - ${jsModule.length} - ${source}`);
     generatedWithoutErrors++;
   } catch (e) {
     if (e.message.includes('- empty json schema')) {
-      emptyJSONSchemas.push(e);
+      emptyJSONSchemas.push(source + ' ' + e.message);
     } else if (e.message.includes('not a valid JSON file')) {
-      notValidJsons.push(e);
+      notValidJsons.push(source + ' ' + e.message);
     } else if (e.message.includes(`Can't process "null" node`)) {
       nullNodes.push(source + ' ' + e.message);
     } else if (e.message.includes('"array" type is not supported')) {
-      multiDimArrays.push(source + ' ', e.message);
+      multiDimArrays.push(source + ' ' + e.message);
     } else if (e.message.includes('should have "properties" field')) {
-      emptyObjects.push(e);
+      emptyObjects.push(source + ' ' + e.message);
     } else if (e.message.includes(`Can't process "undefined" node.`)) {
-      unexpectedNodeFormat.push(e);
+      unexpectedNodeFormat.push(source + ' ' + e.message);
     } else if (e.message.includes(`Proper array node should have "items" field:`)) {
-      emptyArrays.push(e);
+      emptyArrays.push(source + ' ' + e.message);
     } else {
       console.error(`Fail to generate js module for ${source} - ${e}`);
     }
@@ -84,7 +85,11 @@ const main = async () => {
   const opts = parseCliArgs();
 
   const pathsToSchemas = getPathsToSchemas('./test_schemas/');
+  // const pathsToSchemas = [
+  //   '/Users/anton.kravchenko/typed-contracts-generator/test_schemas/result/data/v:api_version/dol/celebrities/:person_id/airings/GET/0_schema',
+  // ];
 
+  // console.log('FILTERED: ', pathsToSchemas);
   let id = 500;
 
   const mapping = JSON.parse(fs.readFileSync('./manifest.json').toString());
@@ -103,6 +108,12 @@ const main = async () => {
   // console.log(`\n\n\n NULL NODES (${nullNodes.length}):\n ${nullNodes.join('\n')}`);
   // console.log(`\n\n\n EMPTY SHEMAS (${emptyJSONSchemas.length}):\n ${emptyJSONSchemas.join('\n')}`);
   // console.log(`\n\n\n MULTIDIM ARRAYS (${multiDimArrays.length}):\n ${multiDimArrays.join('\n')}`);
+  // console.log(`\n\n\n EMPTY OBJECTS (${emptyObjects.join('\n')}):\n ${emptyObjects.join('\n')}`);
+  console.log(
+    `\n\n\n UNEXPECTED NODE FORMAT (${unexpectedNodeFormat.join(
+      '\n',
+    )}):\n ${unexpectedNodeFormat.join('\n')}`,
+  );
 
   console.log('\nSCHEMAS AMOUNT: ', pathsToSchemas.length);
   console.log(
