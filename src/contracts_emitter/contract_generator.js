@@ -33,8 +33,12 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
       emitter.emitValType('string', varName);
       break;
     case 'object': {
-      const { properties } = source;
+      // FIXME: add valid type def for schema
+      let { properties } = source; // NOTE: properties may not be present
       let { required } = source;
+
+      // FIXME: add note about empty object
+      // TODO: make tool that adds node type for every json schema to validate type itself !!!!!  - do it in first place, because it will help to implement exhaustive generation
 
       if (!properties) {
         // throw new Error(
@@ -42,10 +46,12 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
         // );
 
         // FIXME: add tolerant mode??? or remove
+
         console.error(
           `Proper object node should have "properties" field: ${JSON.stringify(source)}`,
         );
         required = [];
+        properties = [];
       }
 
       if (!required) {
@@ -61,8 +67,10 @@ export const generateContract = (source: Node, emitter: Emitter, varName: ?strin
             properties,
           )}, required - ${required} - emitting full list`, // FIXME: CALC delta between required and actual and add .optional postfix
         );
+
         required = Object.keys(properties); // - fixme - uncomment to enable generation of contracts for full list
       }
+
       required.forEach(fieldName => {
         const node = properties[fieldName];
         generateContract(node, emitter, fieldName);
